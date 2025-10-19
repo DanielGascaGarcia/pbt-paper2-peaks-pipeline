@@ -1,0 +1,17 @@
+# Data / intermediates / outputs
+data/*
+work/*
+outputs/*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.venv/
+.env
+
+# OS
+.DS_Store
+Thumbs.db

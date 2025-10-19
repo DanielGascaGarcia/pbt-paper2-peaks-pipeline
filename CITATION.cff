@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "PBT — Paper 2 Peaks Pipeline"
+version: "1.0.0"
+authors:
+  - family-names: "Gasca García"
+    given-names: "Daniel"
+date-released: "2025-10-19"
+license: "MIT"
+doi: "10.5281/zenodo.YOUR-DOI-HERE"
+repository-code: "https://github.com/DanielGascaGarcia/pbt-paper2-peaks"
+keywords: ["diabetes","t1dm","insulin","cgm","peaks","python","reproducibility"]
+preferred-citation:
+  type: software
+  title: "PBT — Paper 2 Peaks Pipeline"
+  authors:
+    - family-names: "Gasca García"
+      given-names: "Daniel"
+  year: 2025
