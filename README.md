@@ -117,7 +117,7 @@ Issues and PRs are welcome. Please keep function docs and I/O contracts consiste
 
 ## 📚 Citation
 
-- **Software (this repository):** Gasca García, D. *PBT — Paper 2 Peaks Pipeline (v1.0.0)*. Zenodo/GitHub. DOI: **https://doi.org/YOUR-DOI-HERE**
+- **Software (this repository):** Gasca García, D. *PBT — Paper 2 Peaks Pipeline (v1.0.0)*. Zenodo/GitHub. DOI: **https://doi.org/10.5281/zenodo.17393515** 
 
 **BibTeX**
 ```bibtex
@@ -127,7 +127,7 @@ Issues and PRs are welcome. Please keep function docs and I/O contracts consiste
   version = {v1.0.0},
   year    = {2025},
   doi     = {YOUR-DOI-HERE},
-  url     = {https://doi.org/YOUR-DOI-HERE}
+  url     = {https://doi.org/10.5281/zenodo.17393515}
 }
 ```
 

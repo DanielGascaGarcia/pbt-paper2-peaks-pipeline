@@ -7,7 +7,7 @@ authors:
     given-names: "Daniel"
 date-released: "2025-10-19"
 license: "MIT"
-doi: "10.5281/zenodo.YOUR-DOI-HERE"
+doi: "10.5281/zenodo.17393515"
 repository-code: "https://github.com/DanielGascaGarcia/pbt-paper2-peaks"
 keywords: ["diabetes","t1dm","insulin","cgm","peaks","python","reproducibility"]
 preferred-citation:
