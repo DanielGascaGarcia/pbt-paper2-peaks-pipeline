@@ -117,22 +117,22 @@ Issues and PRs are welcome. Please keep function docs and I/O contracts consiste
 
 ## 📚 Citation
 
-- **Software (this repository):** Gasca García, D. *PBT — Paper 2 Peaks Pipeline (v1.0.0)*. Zenodo/GitHub. DOI: **https://doi.org/10.5281/zenodo.17393515** 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17393515.svg)](https://doi.org/10.5281/zenodo.17393515)
+
+- **Manuscript:** *Towards a Personalised Basal Tuner: Detecting Basal Rate Inaccuracies in Type 1 Diabetes Mellitus Without Meal Data* (PBT — Paper 2). **JMIR Diabetes** (accepted; in production, 2025).
+- **Software (this repository):** Gasca García, D. **PBT — Paper 2 Peaks Pipeline (v1.0.0).** Zenodo/GitHub. DOI: https://doi.org/10.5281/zenodo.17393515
+
+
 
 **BibTeX**
 ```bibtex
 @software{gasca_garcia_pbt_paper2_peaks_2025_v1_0_0,
-  author  = {Gasca García, Daniel},
-  title   = {PBT — Paper 2 Peaks Pipeline},
-  version = {v1.0.0},
-  year    = {2025},
-  doi     = {YOUR-DOI-HERE},
-  url     = {https://doi.org/10.5281/zenodo.17393515}
+  author    = {Gasca Garcia, Daniel},
+  title     = {PBT — Paper 2 Peaks Pipeline},
+  version   = {v1.0.0},
+  year      = {2025},
+  doi       = {10.5281/zenodo.17393515},
+  url       = {https://doi.org/10.5281/zenodo.17393515},
+  publisher = {Zenodo}
 }
-```
 
----
-
-## 📝 License
-
-MIT
