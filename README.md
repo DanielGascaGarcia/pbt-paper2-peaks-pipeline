@@ -115,12 +115,12 @@ Issues and PRs are welcome. Please keep function docs and I/O contracts consiste
 
 ---
 
-## 📚 Citation
+## 📚 Citation 
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17393515.svg)](https://doi.org/10.5281/zenodo.17393515)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17576007.svg)](https://doi.org/10.5281/zenodo.17576007)
 
 - **Manuscript:** *Towards a Personalised Basal Tuner: Detecting Basal Rate Inaccuracies in Type 1 Diabetes Mellitus Without Meal Data* (PBT — Paper 2). **JMIR Diabetes** (accepted; in production, 2025).
-- **Software (this repository):** Gasca García, D. **PBT — Paper 2 Peaks Pipeline (v1.0.0).** Zenodo/GitHub. DOI: https://doi.org/10.5281/zenodo.17393515
+- **Software (this repository):** Gasca García, D. **PBT — Paper 2 Peaks Pipeline (v1.0.0).** Zenodo/GitHub. DOI: https://doi.org/10.5281/zenodo.17576007
 
 
 
