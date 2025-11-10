@@ -132,7 +132,7 @@ Issues and PRs are welcome. Please keep function docs and I/O contracts consiste
   version   = {v1.0.0},
   year      = {2025},
   doi       = {10.5281/zenodo.17393515},
-  url       = {https://doi.org/10.5281/zenodo.17393515},
+  url       = {https://doi.org/10.5281/zenodo.17576007},
   publisher = {Zenodo}
 }
 
