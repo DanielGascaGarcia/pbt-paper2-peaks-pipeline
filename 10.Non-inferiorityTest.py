@@ -123,8 +123,8 @@ relative_difference_threshold = 0.2
 tstat, pval = non_inferiority_ttest(mean1=mean_total_group1,
                                     stddev1=stddev_total_group1, 
                                     n1=len(Total_group1), 
-                                    mean2=mean_total_group1, 
-                                    stddev2=stddev_total_group1, 
+                                    mean2=mean_total_group2, 
+                                    stddev2=stddev_total_group2, 
                                     n2=len(Total_group2), 
                                     relative_difference=relative_difference_threshold, 
                                     equal_variance=False, 
@@ -136,7 +136,28 @@ print(mean_total_group1)
 print(mean_total_group2)
 data = [Total_group1, Total_group2]
 
+# --- df calculators ---
+def welch_df(n1, n2, s1, s2):
+    v1 = (s1**2) / n1
+    v2 = (s2**2) / n2
+    num = (v1 + v2)**2
+    den = (v1**2)/(n1 - 1) + (v2**2)/(n2 - 1)
+    return num / den
 
+df_welch  = welch_df(len(Total_group1), len(Total_group2),
+                     stddev_total_group1, stddev_total_group2)
+df_pooled = len(Total_group1) + len(Total_group2) - 2  # if you need it
+
+# --- printers (your style + JMIR) ---
+print('One sided ttest Total 1 vs Total 2: t value = {:.5f}, pval = {:.5f}'.format(tstat, pval))
+print('One sided ttest Total 1 vs Total 2 (Welch df={}): t value = {:.5f}, pval = {:.5f}'
+      .format(int(round(df_welch)), tstat, pval))
+
+def p_to_str(p):  # JMIR compact
+    return "P<.001" if p < 0.001 else f"P=.{int(round(p*1000)):03d}"
+
+print('JMIR (one-sided): t({})={:.3f}, {}'
+      .format(int(round(df_welch)), tstat, p_to_str(pval)))
 # Create the boxplot
 fig, ax = plt.subplots(figsize=(8, 6))  # Adjust figure size for better readability
 boxplot = ax.boxplot(data, patch_artist=True, showmeans=True)
@@ -192,6 +213,5 @@ ax.tick_params(axis='both', which='major', labelsize=12)
 # Adjust layout and show the plot
 plt.tight_layout()
 plt.show()
-
 
 
