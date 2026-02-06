@@ -1,3 +1,4 @@
+#Code: 7.SplitHoursPeaks.py
 #Description: Split values in different files.
 #Created 14th November 2023
 #Author: mbaxdg6
@@ -14,7 +15,9 @@ import csv
 
 import globals
 
-# --- Configurable global variable ---
+# -----------------------------------------------------------#
+#              Configurable variables 
+# -----------------------------------------------------------#
 id = globals.id;
 path2 = globals.path2;
 

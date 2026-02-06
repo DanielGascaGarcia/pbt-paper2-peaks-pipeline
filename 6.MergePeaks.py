@@ -1,3 +1,4 @@
+#Code: 6.MergePeaks.py
 #Description: Merge of peak.
 #Created 14th November 2023
 #Author: mbaxdg6
@@ -12,7 +13,9 @@ from matplotlib import pyplot as plt
 import numpy as np
 import globals
 
-# --- Configurable global variable ---
+# -----------------------------------------------------------#
+#              Configurable variables 
+# -----------------------------------------------------------#
 
 # Parameters
 filesBG=[];

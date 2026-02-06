@@ -7,6 +7,9 @@ import os
 import subprocess
 import globals
 
+# -----------------------------------------------------------#
+#              Configurable variables 
+# -----------------------------------------------------------#
 print(f"[Paper 2] Current id: {globals.id}")
 print(f"[Paper 2] globals.path2: {globals.path2}")
 
@@ -20,11 +23,14 @@ if not HAS_P1_BOXPLOT:
         f" - {p_boxplot_p1}\n"
         "Non-inferiority test (10.Non-inferiorityTest.py) will be skipped.\n"
         "To enable it, run Paper 1 (same id) or download from Zenodo: "
-        "https://doi.org/10.5281/zenodo.17392921\n"
+        "https://doi.org/10.5281/zenodo.17392920\n"
         f"Current globals.path2: {globals.path2}\n"
     )
 
-# --- Execution list (Paper 2) ---
+# -----------------------------------------------------------#
+#              Scripts
+# -----------------------------------------------------------#
+
 scripts = [
     "globals.py",
     "0.Parser.py",
@@ -37,16 +43,18 @@ scripts = [
     "7.SplitHoursPeaks.py",
     "8.RelativeChangePeaks.py",
     "9.BoxplotPeak.py",
-    "10.Non-inferiorityTest.py",       # <- only if HAS_P1_BOXPLOT
+    "10.Non-inferiorityTest.py",       
     "10.PivotGeneratormediansPeak.py",
-    "12.MergeRChBasalPeakNoAct.py",    # <- modified (no basal, keeps colors)
+    "12.MergeRChBasalPeakNoAct.py",    
 ]
 
+# -----------------------------------------------------------#
 # Remove non-inferiority if requirement missing
+# -----------------------------------------------------------#
 if not HAS_P1_BOXPLOT and "10.Non-inferiorityTest.py" in scripts:
     scripts.remove("10.Non-inferiorityTest.py")
 
-# --- Run sequentially ---
+
 for script in scripts:
     try:
         print(f"[Paper 2] Running: {script} ...")

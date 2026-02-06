@@ -1,4 +1,5 @@
-#Description: Generating pivot with relative changes on peaks.
+#Code: 10.Non-inferiorityTest.py
+#Description: Run of non-interiority test.
 #Created 14th november 2023
 #Author: mbaxdg6
 
@@ -19,7 +20,9 @@ from scipy.stats import ttest_ind_from_stats
 import numpy as np
 import globals
 
-# --- Configurable global variable ---
+# -----------------------------------------------------------#
+#              Configurable variables 
+# -----------------------------------------------------------#
 id = globals.id;
 path2 = globals.path2;
 fileToRead1="Boxplot"+str(id);
@@ -135,8 +138,12 @@ print('One sided ttest Total 1 vs Total 2: t value = {:.5f}, pval = {:.5f}'.form
 print(mean_total_group1)
 print(mean_total_group2)
 data = [Total_group1, Total_group2]
+# -----------------------------------------------------------#
+#                        df calculators 
+# -----------------------------------------------------------#
+#        This code is for jmir requieremnts of df
+# -----------------------------------------------------------#
 
-# --- df calculators ---
 def welch_df(n1, n2, s1, s2):
     v1 = (s1**2) / n1
     v2 = (s2**2) / n2
@@ -148,27 +155,29 @@ df_welch  = welch_df(len(Total_group1), len(Total_group2),
                      stddev_total_group1, stddev_total_group2)
 df_pooled = len(Total_group1) + len(Total_group2) - 2  # if you need it
 
-# --- printers (your style + JMIR) ---
+
 print('One sided ttest Total 1 vs Total 2: t value = {:.5f}, pval = {:.5f}'.format(tstat, pval))
 print('One sided ttest Total 1 vs Total 2 (Welch df={}): t value = {:.5f}, pval = {:.5f}'
       .format(int(round(df_welch)), tstat, pval))
 
-def p_to_str(p):  # JMIR compact
+def p_to_str(p): 
     return "P<.001" if p < 0.001 else f"P=.{int(round(p*1000)):03d}"
 
 print('JMIR (one-sided): t({})={:.3f}, {}'
       .format(int(round(df_welch)), tstat, p_to_str(pval)))
-# Create the boxplot
-fig, ax = plt.subplots(figsize=(8, 6))  # Adjust figure size for better readability
+# -----------------------------------------------------------#
+#                    Create boxplot
+# -----------------------------------------------------------#
+fig, ax = plt.subplots(figsize=(8, 6))  
 boxplot = ax.boxplot(data, patch_artist=True, showmeans=True)
 
-# Customize box appearance
-colors = ['#87CEEB', '#FFCCCB']  # Light blue and light pink colors for each box
+
+colors = ['#87CEEB', '#FFCCCB']  
 for patch, color in zip(boxplot['boxes'], colors):
     patch.set_facecolor(color)
     patch.set_edgecolor('black')
 
-# Customize whiskers, caps, and medians
+
 for whisker in boxplot['whiskers']:
     whisker.set(color='black', linewidth=1.5, linestyle='--')
 
@@ -178,27 +187,21 @@ for cap in boxplot['caps']:
 for median in boxplot['medians']:
     median.set(color='red', linewidth=2)
 
-# Customize the mean point
+
 for mean in boxplot['means']:
     mean.set(marker='o', markerfacecolor='black', markeredgecolor='black', markersize=7)
 
-# Customize x-axis labels and title
+
 plt.xticks([1, 2], ['With  Meal Data', 'Without  Meal Data'], fontsize=12)
 plt.xlabel('Comparison of Approaches with vs Without Meal Data', fontsize=14)
 
 plt.ylabel('BG Relative Change (mg/dL)', fontsize=14)
 plt.title(f'Cumulative Deviation of Blood Glucose: {id}', fontsize=16)
 
-# Add grid and adjust its appearance
+
 plt.grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.7)
 
-# # Add legend for Meal and No Meal boxes
-# legend_labels = ['Meal Announcement', 'No Meal Announcement']
-# legend_colors = ['#87CEEB', '#FFCCCB']
-# legend_handles = [plt.Rectangle((0, 0), 1, 1, color=color, edgecolor='black') for color in legend_colors]
-# plt.legend(legend_handles, legend_labels, loc='upper right', fontsize=12, title="Legend")
 
-# Customize y-ticks for both mg/dL and mmol/L
 def mg_dL_to_mmol(y):
     return y * 0.0555
 
@@ -206,11 +209,10 @@ secax = ax.secondary_yaxis('right', functions=(mg_dL_to_mmol, lambda y: y / 0.05
 secax.set_ylabel("BG Relative Change (mmol/L)", fontsize=14)
 secax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{x:.1f}'))
 
-# Add minor ticks for y-axis
 ax.yaxis.set_minor_locator(plt.MultipleLocator(5))
 ax.tick_params(axis='both', which='major', labelsize=12)
 
-# Adjust layout and show the plot
+
 plt.tight_layout()
 plt.show()
 
