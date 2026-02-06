@@ -91,7 +91,7 @@ This pipeline optionally uses a **Paper 1** artifact (same `id`) **only for the 
 Obtain it by either:
 
 - Running **Paper 1** with the same `id`, or  
-- Downloading the versioned release: Zenodo https://doi.org/10.5281/zenodo.17392921 (Repo: https://github.com/DanielGascaGarcia/pbt-paper1-pipeline)
+- Downloading the versioned release: Zenodo https://doi.org/10.5281/zenodo.17392920 (Repo: https://github.com/DanielGascaGarcia/pbt-paper1-pipeline)
 
 > If this file is not present in `globals.path2`, the runner will **skip** `10.Non-inferiorityTest.py` and continue.
 
@@ -117,22 +117,22 @@ Issues and PRs are welcome. Please keep function docs and I/O contracts consiste
 
 ## 📚 Citation 
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17576007.svg)](https://doi.org/10.5281/zenodo.17576007)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17393514.svg)](https://doi.org/10.5281/zenodo.17393514)
 
 - **Manuscript:** *Towards a Personalised Basal Tuner: Detecting Basal Rate Inaccuracies in Type 1 Diabetes Mellitus Without Meal Data* (PBT — Paper 2). **JMIR Diabetes** (accepted; in production, 2025).
-- **Software (this repository):** Gasca García, D. **PBT — Paper 2 Peaks Pipeline (v1.0.0).** Zenodo/GitHub. DOI: https://doi.org/10.5281/zenodo.17576007
+- **Software (this repository):** Gasca García, D. **PBT — Paper 2 Peaks Pipeline (v1.0.0).** Zenodo/GitHub. DOI: https://doi.org/10.5281/zenodo.17393514
 
 
 
 **BibTeX**
 ```bibtex
-@software{gasca_garcia_pbt_paper2_peaks_2025_v1_0_0,
+@software{gasca_garcia_pbt_paper2_peaks_2025_v1_1_2,
   author    = {Gasca Garcia, Daniel},
   title     = {PBT — Paper 2 Peaks Pipeline},
   version   = {v1.0.0},
   year      = {2025},
   doi       = {10.5281/zenodo.17393515},
-  url       = {https://doi.org/10.5281/zenodo.17576007},
+  url       = {https://doi.org/10.5281/zenodo.17393514},
   publisher = {Zenodo}
 }
 
