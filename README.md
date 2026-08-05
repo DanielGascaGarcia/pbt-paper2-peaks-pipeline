@@ -301,7 +301,6 @@ pbt-paper2-peaks-pipeline/
 ├─ S.GenerateSampleData.py           synthetic data generator
 ├─ 17.ScriptforTestExperiment2.py    orchestrator
 ├─ requirements.txt
-├─ CHANGELOG.md
 ├─ CITATION.cff
 ├─ LICENSE
 ├─ raw/                              input data (not distributed)
@@ -570,7 +569,7 @@ Validation Study. *JMIR Diabetes.* 2025;10:e72769. doi: 10.2196/72769
 software]. Zenodo. doi: **10.5281/zenodo.17393514**
 
 The DOI above is the concept DOI: it always resolves to the most recent
-version. See `CITATION.cff` and `CHANGELOG.md`.
+version. See `CITATION.cff`.
 
 ```bibtex
 @software{gasca_garcia_pbt_paper2_peaks,
