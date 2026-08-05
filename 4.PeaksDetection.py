@@ -24,8 +24,9 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 from scipy.signal import find_peaks, peak_prominences,peak_widths
 matplotlib.rcParams.update({'font.size': 15})
 
-
-# --- Configurable global variable ---
+# -----------------------------------------------------------#
+#              Configurable variables 
+# -----------------------------------------------------------#
 id = globals.id;
 filesBG=[];
 filesMeals=[];

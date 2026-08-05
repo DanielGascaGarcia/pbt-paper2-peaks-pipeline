@@ -12,8 +12,9 @@ import os
 import globals
 # 540,544,552,567,584,596,559,563,570,575,588,591
 keys={'ts','tend','tbegin','ts_begin','ts_end'};
-
-# --- Configurable global variable ---
+# -----------------------------------------------------------#
+#              Configurable variables 
+# -----------------------------------------------------------#
 id = globals.id;
 fileToRead=str(id)+"-ws-training";
 path1=globals.path1;

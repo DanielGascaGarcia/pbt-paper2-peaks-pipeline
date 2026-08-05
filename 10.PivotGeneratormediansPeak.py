@@ -15,7 +15,9 @@ import seaborn as sns
 warnings.simplefilter(action='ignore', category=FutureWarning)
 import globals
 
-# --- Configurable global variable ---
+# -----------------------------------------------------------#
+#              Configurable variables 
+# -----------------------------------------------------------#
 id = globals.id;
 path2 = globals.path2;
 fileToRead="BoxplotPeak"+str(id);

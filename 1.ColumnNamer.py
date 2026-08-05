@@ -13,7 +13,9 @@ import csv
 import pandas as pd
 import globals
 
-# --- Configurable global variable ---
+# -----------------------------------------------------------#
+#              Configurable variables 
+# -----------------------------------------------------------#
 id = globals.id;
 fileToRead=str(id)+"-ws-training";
 path1=globals.path1;
@@ -27,11 +29,13 @@ elemList = [];
 for child in ohioRoot:
     print(child.tag, child.attrib);
     elemList.append(child.tag);
-
-#Duplicities are removed
+# -----------------------------------------------------------#
+#               Duplicities are removed
+# -----------------------------------------------------------#
 elemList = list(set(elemList));
-
-# Printing the results
+# -----------------------------------------------------------#
+#                     Printing the results
+# -----------------------------------------------------------#
 print(len(elemList));
 
 
