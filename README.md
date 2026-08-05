@@ -550,11 +550,11 @@ and comparing the resulting artefacts across independent runs, which were
 identical.
 
 The code archived with the original article executes but does not regenerate
-the outputs reported there. The divergence has been localised to the
-midnight-overflow trimming stage, and the most likely explanation is that the
-original outputs were produced across several partial runs accumulating in a
-shared output directory — a condition that cannot be recreated. This package
-supersedes that archive.
+the outputs reported there. The most likely explanation is that the original
+outputs were produced across several partial runs accumulating in a shared
+output directory — no stage removes outputs from a previous run, and the merge
+stage consumes whatever intermediate files it finds — a condition that cannot
+be recreated. This package supersedes that archive.
 
 ---
 
