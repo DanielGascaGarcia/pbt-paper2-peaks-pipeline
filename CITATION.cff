@@ -1,19 +1,29 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 title: "PBT — Paper 2 Peaks Pipeline"
-version: "1.0.0"
+version: "2.0.0"
 authors:
   - family-names: "Gasca García"
     given-names: "Daniel"
-date-released: "2025-10-19"
-license: "MIT"
-doi: "10.5281/zenodo.17393515"
-repository-code: "https://github.com/DanielGascaGarcia/pbt-paper2-peaks"
-keywords: ["diabetes","t1dm","insulin","cgm","peaks","python","reproducibility"]
+    affiliation: "Department of Computer Science, The University of Manchester"
+repository-code: "https://github.com/DanielGascaGarcia/pbt-paper2-peaks-pipeline"
+license: MIT
+date-released: "2026-08-05"
+doi: "10.5281/zenodo.17393514"
+keywords: ["diabetes", "t1dm", "insulin", "cgm", "peaks", "python", "reproducibility"]
 preferred-citation:
-  type: software
-  title: "PBT — Paper 2 Peaks Pipeline"
+  type: article
+  title: "Toward a Personalized Basal Tuner for Detecting Basal Rate Inaccuracies in Type 1 Diabetes Mellitus Without Meal Data: Algorithm Development and Retrospective Validation Study"
   authors:
-    - family-names: "Gasca García"
+    - family-names: "Gasca Garcia"
       given-names: "Daniel"
+    - family-names: "Thabit"
+      given-names: "Hood"
+    - family-names: "Nutter"
+      given-names: "Paul W."
+    - family-names: "Harper"
+      given-names: "Simon"
+  journal: "JMIR Diabetes"
+  volume: 10
   year: 2025
+  doi: "10.2196/72769"

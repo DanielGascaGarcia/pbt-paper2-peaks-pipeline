@@ -1,7 +1,12 @@
-# Data / intermediates / outputs
-data/*
-work/*
-outputs/*
+# Data — not redistributable (OhioT1DM is under a Data Use Agreement)
+raw/
+
+# Regenerated on every run
+processed/
+sample_data/
+
+# Figures are regenerated; tables are versioned
+results/figures/
 
 # Python
 __pycache__/

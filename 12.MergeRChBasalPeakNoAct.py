@@ -1,6 +1,6 @@
 # Description: Plot hourly relative BG change WITHOUT basal info (colors preserved).
 # Created: 19 Oct 2025 (refactor to remove basal dependency)
-# Author: mbaxdg6 (refactor by assistant)
+# Author: mbaxdg6
 
 import os
 import numpy as np
@@ -14,9 +14,17 @@ import globals
 # --- Configurable globals ---
 id = globals.id
 path2 = globals.path2
+path3 = globals.path3
+os.makedirs(path3, exist_ok=True)
 file_rel = f"BGHourRelativeChangePeak{id}0To24medians_wCN.csv"
 file_out = f"ComparisonJoinedPeakNoActivity{id}.csv"   # mantenemos el nombre para compatibilidad
 Sampling_time_hours = 0.1  # ~6 minutos
+
+# -----------------------------------------------------------#
+# Unit conversion. Source values are in mg/dL.
+# Factor lives in globals.py so every script shares one value.
+# -----------------------------------------------------------#
+MGDL_TO_MMOL = globals.MGDL_TO_MMOL
 
 # -----------------------------
 # Read relative-change only
@@ -44,7 +52,6 @@ data['TimeHours'] = data['Key'].apply(hhmmss_to_hours)
 # -----------------------------
 # Guardar salida (sin basal)
 # -----------------------------
-# Si deseas conservar el mismo CSV de salida, lo escribimos con las columnas disponibles
 data[['Key', 'MedRelChange', 'Flag', 'TimeHours']].to_csv(os.path.join(path2, file_out), index=False)
 
 # -----------------------------
@@ -55,7 +62,7 @@ step = max(1, int(round(Sampling_time_hours * 60)))  # 0.1 h ≈ 6 minutos
 data_plot = data.iloc[::step, :].copy()
 
 # -----------------------------
-# Colores por confiabilidad (exactamente como en el original)
+# Colores por confiabilidad
 # Flag: 1 -> "Red" (Low), 2 -> "Yellow" (Medium), else -> "Green" (High)
 # -----------------------------
 col = np.where(
@@ -67,47 +74,92 @@ data_plot['Color'] = col
 # -----------------------------
 # Plot
 # -----------------------------
-fig, ax2 = plt.subplots(nrows=1, sharex=True)
-plt.suptitle(f"Blood Glucose Dynamic without Meal Announcement, ID: {id}")
+fig, ax2 = plt.subplots(nrows=1, sharex=True, figsize=(12, 6),
+                        constrained_layout=True)
 
-# Curva principal (negra punteada) + línea base
+# Journals put the title in the caption, not in the image.
+if globals.FIGURE_TITLES:
+    plt.title(f"BG dynamics without meal announcement, patient ID: {id}")
+
+# Main curve (black dotted) + baseline at 0
 ax2.plot(data_plot['TimeHours'], data_plot['MedRelChange'], 'o--', color="Black")
-ax2.axhline(linewidth=2, color='Black')
+ax2.axhline(y=0, linewidth=2, color='Black')
+
+# Sentence case axis labels. Units are split across the two axes below.
 ax2.set_xlabel("Time (h)")
-ax2.set_ylabel("BG Rel. Change \n (mg/dL) (mmol/L)")
+ax2.set_ylabel("BG relative change\n(mg/dL)")
+
 ax2.grid(which='major', color='#DDDDDD', linewidth=0.8)
 ax2.grid(which='minor', color='#DDDDDD', linestyle=':', linewidth=0.5)
 
-# Puntos por fiabilidad (mismo texto de leyenda que tu script original: "reliabilty")
+# Legend labels in sentence case, spelling fixed
 legend_added = {'Low': False, 'Medium': False, 'High': False}
 
-for i, row in data_plot.iterrows():
+for _, row in data_plot.iterrows():
     flag = int(row['Flag'])
     color = row['Color']
     x = row['TimeHours']
     y = row['MedRelChange']
 
     if flag == 1:
-        lbl = 'Low reliabilty of BG'
+        lbl = 'Low reliability of BG'
         if not legend_added['Low']:
             ax2.plot(x, y, 'o', color=color, label=lbl)
             legend_added['Low'] = True
         else:
             ax2.plot(x, y, 'o', color=color)
     elif flag == 2:
-        lbl = 'Medium reliabilty of BG'
+        lbl = 'Medium reliability of BG'
         if not legend_added['Medium']:
             ax2.plot(x, y, 'o', color=color, label=lbl)
             legend_added['Medium'] = True
         else:
             ax2.plot(x, y, 'o', color=color)
     else:
-        lbl = 'High reliabilty of BG'
+        lbl = 'High reliability of BG'
         if not legend_added['High']:
             ax2.plot(x, y, 'o', color=color, label=lbl)
             legend_added['High'] = True
         else:
             ax2.plot(x, y, 'o', color=color)
 
-ax2.legend(loc='upper right')
-plt.show()
+# -----------------------------------------------------------#
+# Legend ordered Low / Medium / High regardless of the order in
+# which the categories first appear in the series.
+# -----------------------------------------------------------#
+wanted = ['Low reliability of BG',
+          'Medium reliability of BG',
+          'High reliability of BG']
+handles, labels = ax2.get_legend_handles_labels()
+pairs = dict(zip(labels, handles))
+ordered = [(lbl, pairs[lbl]) for lbl in wanted if lbl in pairs]
+if ordered:
+    ax2.legend([h for _, h in ordered], [l for l, _ in ordered],
+               loc='upper right', fontsize=11, framealpha=0.9)
+
+# -----------------------------------------------------------#
+# Patient identifier, inside the axes as in the published figure.
+# -----------------------------------------------------------#
+ax2.text(0.01, 0.98, f"patient ID: {id}", transform=ax2.transAxes,
+         ha="left", va="top", fontsize=11, color="black")
+
+# -----------------------------------------------------------#
+# Secondary axis in mmol/L. Rescale only: the data is drawn once
+# on ax2. Placed here so it inherits the final y limits.
+# -----------------------------------------------------------#
+ax2b = ax2.twinx()
+ax2b.set_ylim([v * MGDL_TO_MMOL for v in ax2.get_ylim()])
+ax2b.set_ylabel("BG relative change\n(mmol/L)")
+ax2b.grid(False)
+
+# -----------------------------------------------------------#
+# Save figure. Only the worked example used in the article is
+# written; the panel is built for every participant because the
+# CSV above is, but the other panels are not part of the record.
+# -----------------------------------------------------------#
+if id == globals.idG:
+    out = os.path.join(path3, 'Figure6.png')
+    plt.savefig(out, dpi=300, bbox_inches='tight')
+    print("Saved:", os.path.abspath(out))
+
+plt.close(fig)

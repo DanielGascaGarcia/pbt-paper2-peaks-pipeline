@@ -1,7 +1,18 @@
-pandas>=1.5
-numpy>=1.23
-scipy>=1.9
-matplotlib>=3.6
-seaborn>=0.12
-tqdm>=4.64
-python-dateutil>=2.8
+# PBT pipeline (Paper 2, peaks) - direct dependencies
+# Repository: https://github.com/DanielGascaGarcia/pbt-paper2-peaks-pipeline
+#
+# Environment in which the values reported in the correction notice reproduce.
+# Python 3.9.12, conda, Windows. Same specification as the Paper 1 pipeline,
+# so both repositories run under one environment.
+#
+# Install with:
+#   conda create -n pbt python=3.9.12
+#   conda activate pbt
+#   pip install -r requirements.txt
+
+numpy==2.0.2
+pandas==2.2.2
+scipy==1.13.1
+matplotlib==3.9.2
+seaborn==0.13.2
+pillow==9.0.1

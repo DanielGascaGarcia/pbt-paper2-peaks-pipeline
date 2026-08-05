@@ -79,7 +79,7 @@ for x in range(len(elemList)):
                             print('Not valid');
                     else:
                          str1=str1+str(" , ")+y.keys()[z]+str(" , ")+y.attrib[y.keys()[z]];                  
-        file = open('C:/OhioDataset/ExploratoryAnalysisData/OhioT1DM/2018/parsedTexts/'+str(ohioRoot[x].tag)+str(fileToRead)+".csv", 'a');
+        file = open(globals.path2+str(ohioRoot[x].tag)+str(fileToRead)+".csv", 'a');
         file.write(str(str1));
         file.write('\n');
         file.close();
