@@ -349,7 +349,17 @@ afterwards in an image editor. The underlying values are unaffected.
   precision analysis.
 - **Off-by-one in the box plot step.** The row count was derived from the
   column count of a file with a different number of non-data columns, silently
-  discarding the last day of every participant.
+  discarding the last day of every participant. Present in both branches.
+- **Off-by-one in the relative-change step, peak branch.** The loop writing the
+  per-hour last-value files used the offset of the loop above it, which reads a
+  file with a different number of non-data columns, leaving those files one row
+  short.
+- **Blank-line handling, peak branch.** Days with no data were written as a
+  single space and dropped when the file was read back, because blank lines are
+  skipped by default; every later value then moved up one position and the row
+  index no longer identified the day. The files are now read with
+  `skip_blank_lines=False` and coerced to numeric. The set of values was
+  unchanged; only their position was.
 
 Every reported figure was recomputed. The central finding is unchanged.
 
