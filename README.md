@@ -311,8 +311,9 @@ pbt-paper2-peaks-pipeline/
    └─ tables/
 ```
 
-`sample_data/` and `processed/` are regenerated and are listed in
-`.gitignore`.
+`sample_data/`, `processed/` and `results/figures/` are created by the code and
+are listed in `.gitignore`. `raw/` is the only directory you need to create
+yourself, and only when running against the real dataset.
 
 ---
 
