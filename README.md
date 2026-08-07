@@ -217,13 +217,9 @@ python -c "import sys; print(sys.executable)"
 
 Reproducibility was verified by executing the full pipeline twice from a clean
 state and comparing the resulting artefacts between runs. Ten artefacts were
-compared and were identical byte for byte. Both sets of outputs are included
-under `verification/run1/` and `verification/run2/`, so the comparison can be
-repeated without re-running the pipeline:
-
-```bash
-diff -r verification/run1 verification/run2
-```
+compared and were identical byte for byte. To repeat the check, run the
+pipeline twice, copying the contents of `results/tables/` to a separate
+directory after the first run, and compare the two.
 
 ---
 
@@ -432,7 +428,7 @@ Every reported figure was recomputed. The central finding is unchanged.
 - Paths resolved relative to `globals.py`; thresholds, unit conversion and
   figure switches centralised there.
 - Determinism verified: two runs from a clean state, ten artefacts compared,
-  identical byte for byte. Both output sets ship under `verification/`.
+  identical byte for byte.
 
 ### Metadata
 
