@@ -154,8 +154,8 @@ here, so the reported values can be checked without re-running the pipeline.
 
 ## Environment
 
-**Python 3.9.12**, conda, Windows. Dependencies are pinned in
-`requirements.txt`:
+**Python 3.9.12**. Developed on Windows under conda, but neither is required —
+see Option B below. Dependencies are pinned in `requirements.txt`:
 
 ```
 numpy==2.0.2
@@ -166,23 +166,63 @@ seaborn==0.13.2
 pillow==9.0.1
 ```
 
+Either route below works. They differ in one respect: conda installs Python
+3.9.12 for you, whereas `venv` requires it to be present already.
+
+**Option A — conda**
+
 ```bash
 conda create -n pbt python=3.9.12
 conda activate pbt
 pip install -r requirements.txt
 ```
 
-This is the environment in which the **corrected** values reproduce, verified
-by independent runs from a clean state. It is the same specification used for
-the Paper 1 pipeline, so both repositories run under one environment. It is
-not a record of the environment used for the originally published run, which
-was not preserved.
+**Option B — venv, no conda required**
+
+Check first that Python 3.9 is available (`py -3.9 --version` on Windows,
+`python3.9 --version` elsewhere). If it is not, install it from python.org or
+your system package manager, or use Option A.
+
+```powershell
+# Windows (PowerShell)
+py -3.9 -m venv .venv
+.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+```bash
+# Linux / macOS
+python3.9 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+Other Python versions have not been tested and are not guaranteed to reproduce
+the reported values.
+
+This is the environment in which the **corrected** values reproduce. It is the
+same specification used for the Paper 1 pipeline, so both repositories run
+under one environment. It is not a record of the environment used for the
+originally published run, which was not preserved.
 
 Before running, confirm the interpreter actually in use — a mismatched
 environment is the most common cause of a run that behaves unexpectedly:
 
 ```bash
+python --version                              # expect 3.9.12
 python -c "import sys; print(sys.executable)"
+```
+
+Reproducibility was verified by executing the full pipeline twice from a clean
+state and comparing the resulting artefacts between runs. Ten artefacts were
+compared and were identical byte for byte. Both sets of outputs are included
+under `verification/run1/` and `verification/run2/`, so the comparison can be
+repeated without re-running the pipeline:
+
+```bash
+diff -r verification/run1 verification/run2
 ```
 
 ---
@@ -391,6 +431,8 @@ Every reported figure was recomputed. The central finding is unchanged.
   dataset.
 - Paths resolved relative to `globals.py`; thresholds, unit conversion and
   figure switches centralised there.
+- Determinism verified: two runs from a clean state, ten artefacts compared,
+  identical byte for byte. Both output sets ship under `verification/`.
 
 ### Metadata
 
