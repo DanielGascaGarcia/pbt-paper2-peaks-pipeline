@@ -23,9 +23,8 @@ matplotlib.rcParams.update({'font.size': 15})
 import math
 warnings.simplefilter(action='ignore', category=FutureWarning)
 import globals
-# -----------------------------------------------------------#
-#              Configurable variables 
-# -----------------------------------------------------------#
+
+# --- Configurable global variable ---
 id = globals.id;
 path2 = globals.path2;
 

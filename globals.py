@@ -28,7 +28,7 @@ matplotlib.use("Agg")
 #
 # Results produced in demo mode are meaningless. Do not compare them with
 # anything reported in the article or in the correction notice.
-DEMO = False
+DEMO = True
 
 # -----------------------------------------------------------#
 # Paths
@@ -50,11 +50,15 @@ DEMO = False
 # current one. The orchestrator clears path2 before every run for this
 # reason; clear it by hand if you run steps individually.
 HERE = os.path.dirname(os.path.abspath(__file__))
+_out = 'demo_output' if DEMO else '.'
 
 path1 = os.path.join(HERE, 'sample_data' if DEMO else 'raw') + '/'
-path2 = os.path.join(HERE, 'processed') + '/'
-path3 = os.path.join(HERE, 'results', 'figures') + '/'
-path4 = os.path.join(HERE, 'results', 'tables') + '/'
+path2 = os.path.join(HERE, _out, 'processed') + '/'
+path3 = os.path.join(HERE, _out, 'results', 'figures') + '/'
+path4 = os.path.join(HERE, _out, 'results', 'tables') + '/'
+
+for _p in (path2, path3, path4):
+    os.makedirs(_p, exist_ok=True)
 
 # -----------------------------------------------------------#
 # Participant selection

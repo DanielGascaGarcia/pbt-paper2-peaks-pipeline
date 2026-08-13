@@ -73,10 +73,6 @@ The precision window is anchored on the base point rather than the peak,
 because the meal precedes the rise, and it is narrower because it is a matching
 criterion rather than a removal rule.
 
-The precision window was defined from exploratory analysis of the variability
-in the timing and quality of meal annotations. Widening it by one hour on the
-matching side changes mean precision by a few percentage points in either
-direction across participants and does not alter the included set.
 
 ---
 
@@ -251,6 +247,11 @@ files into `sample_data/` and runs on those. Demo mode never reads or writes
 `raw/`, so leaving the flag set by accident cannot overwrite data obtained
 under the Data Use Agreement.
 
+Demo mode also redirects every output: intermediates, figures and tables are
+written under `demo_output/` instead of `processed/` and `results/`. The tables
+under `results/tables/` are tracked in the repository, and this keeps a demo run
+from overwriting them with synthetic values.
+
 The generator can also be run on its own:
 
 ```bash
@@ -323,7 +324,7 @@ paths, which is why the deposited code did not run elsewhere.
 | `MISSING_THRESHOLD` | exclusion criterion: more than this fraction of days without meal annotation |
 | `MGDL_TO_MMOL` | unit conversion factor (1/18) |
 | `FIGURE_TITLES` | `False` for submission figures; `True` to render titles for local review |
-| `path1`-`path4` | input, `processed/`, `results/figures/`, `results/tables/` |
+| `path1`-`path4` | input, `processed/`, `results/figures/`, `results/tables/` (all four under `demo_output/` when `DEMO` is True) |
 
 ---
 
@@ -342,13 +343,14 @@ pbt-paper2-peaks-pipeline/
 ├─ raw/                              input data (not distributed)
 ├─ sample_data/                      synthetic data (regenerated; not versioned)
 ├─ processed/                        intermediates (cleared on each run)
+├─ demo_output/                      all demo-mode output (not versioned)
 └─ results/
    ├─ figures/
    └─ tables/
 ```
 
-`sample_data/`, `processed/` and `results/figures/` are created by the code and
-are listed in `.gitignore`. `raw/` is the only directory you need to create
+`sample_data/`, `processed/`, `demo_output/` and `results/figures/` are created
+by the code and are listed in `.gitignore`. `raw/` is the only directory you need to create
 yourself, and only when running against the real dataset.
 
 ---
@@ -427,16 +429,8 @@ Every reported figure was recomputed. The central finding is unchanged.
   dataset.
 - Paths resolved relative to `globals.py`; thresholds, unit conversion and
   figure switches centralised there.
-- Determinism verified: two runs from a clean state, ten artefacts compared,
+- Determinism verified: three runs from a clean state, ten artefacts compared,
   identical byte for byte.
-
-### Metadata
-
-- Table 1: the participant-selection column described what participants
-  reported rather than which sensor band they wore. Pump model for 552 and age
-  group for 596 corrected against the dataset documentation.
-- Textbox 1: a pseudocode line subtracted zero rather than one day.
-- Figure 3 caption: described the panel as a single day of 45 readings.
 
 ---
 
@@ -460,10 +454,8 @@ detected peaks sit slightly later than the underlying maximum. This is one
 reason the meal-matching window extends further before the peak than after it.
 
 Using the same cutoff in both stages leaves mean precision essentially
-unchanged (70.65% against 70.64% across the nine included participants) and
-does not alter the included set, although individual precisions shift by up to
-five percentage points in either direction and between-participant dispersion
-increases.
+unchanged across the nine included participants and does not alter the
+included set.
 
 ### Midnight-overflow trimming (peak branch only)
 

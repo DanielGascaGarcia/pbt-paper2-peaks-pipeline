@@ -1,4 +1,3 @@
-#Code: 1.RelativeChangePeaks.py
 #Description: Computation of relative changes.
 #Created 14th November 2023
 #Author: mbaxdg6
@@ -15,9 +14,7 @@ import csv
 pd.options.mode.chained_assignment = None  # default='warn'
 import globals
 
-# -----------------------------------------------------------#
-#              Configurable variables 
-# -----------------------------------------------------------#
+# --- Configurable global variable ---
 id = globals.id;
 path2 = globals.path2;
 fileToRead="BGHourPeak"+str(id);

@@ -135,6 +135,7 @@ for directory in (globals.path2, globals.path3, globals.path4):
 # Per-participant pipeline
 # ------------------------------------------------------------------ #
 failures = []
+completed = []
 
 for patient_id in globals.ids:
     print(f"\n{'=' * 58}")
@@ -154,6 +155,7 @@ for patient_id in globals.ids:
             failures.append((patient_id, script, e.returncode))
             break
     else:
+        completed.append(patient_id)
         print(f"\n  ID {patient_id}: complete")
 
 # ------------------------------------------------------------------ #
@@ -172,6 +174,42 @@ if failures:
     print("  would have produced output from an incomplete set.")
     print("  Fix the errors above and re-run.\n")
     sys.exit(1)
+
+# ------------------------------------------------------------------ #
+# Confirm every participant produced BOTH branch summaries
+# ------------------------------------------------------------------ #
+# A step can lose a participant without raising: an empty read, a silent
+# exception, a filter that matches nothing. The pipeline then completes and
+# the aggregation scripts average over whatever is present. It matters more
+# here than in the meal-only pipeline, because an analysis that pairs the
+# two branches would silently drop any participant missing either one.
+#
+# Size is checked as well as existence: a step that opens its output file
+# and then fails leaves a zero-byte CSV behind, which os.path.isfile alone
+# would accept as a successful run.
+expected = [(i, f"{prefix}{i}0-24total.csv")
+            for i in globals.ids
+            for prefix in ("Boxplot", "BoxplotPeak")]
+absent = []
+for i, f in expected:
+    p = os.path.join(globals.path2, f)
+    if not os.path.isfile(p):
+        absent.append((i, f, "not found"))
+    elif os.path.getsize(p) == 0:
+        absent.append((i, f, "empty"))
+if absent:
+    print(f"\n{'=' * 58}")
+    print("  OUTPUTS MISSING AFTER PIPELINE")
+    print(f"{'=' * 58}")
+    print(f"  Expected in: {globals.path2}")
+    for i, f, why in absent:
+        print(f"    ID {i:<6} {f:<34} {why}")
+    print(f"\n  {len(absent)} expected file(s) absent or empty, and every")
+    print("  step reported success. Aggregation was not run: it reads all")
+    print("  participants at once and would have produced output from an")
+    print("  incomplete set.\n")
+    sys.exit(1)
+print(f"\n  All {len(globals.ids)} participants produced both branch summaries.")
 
 env_final = os.environ.copy()
 env_final["PATIENT_ID"] = str(globals.idG)
@@ -194,7 +232,7 @@ print(f"\n{'=' * 58}")
 print("  SUMMARY")
 print(f"{'=' * 58}")
 print(f"  IDs attempted : {len(globals.ids)}")
-print(f"  IDs completed : {len(globals.ids)}")
+print(f"  IDs completed : {len(completed)}")
 
 if failures:
     print(f"\n  {len(failures)} failure(s) in the aggregation stage:")
