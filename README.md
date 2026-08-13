@@ -429,7 +429,7 @@ Every reported figure was recomputed. The central finding is unchanged.
   dataset.
 - Paths resolved relative to `globals.py`; thresholds, unit conversion and
   figure switches centralised there.
-- Determinism verified: three runs from a clean state, ten artefacts compared,
+- Determinism verified: two runs from a clean state, ten artefacts compared,
   identical byte for byte.
 
 ---
