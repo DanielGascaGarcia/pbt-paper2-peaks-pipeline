@@ -13,7 +13,7 @@ A single orchestrator executes every step in order.
 
 > **This release accompanies a correction notice.** The version archived with
 > the original article executes but does not regenerate the published values.
-> Two defects were found and are fixed here; the reported figures were
+> Four defects were found and are fixed here; the reported figures were
 > recomputed. See *Changes in this release*.
 
 ---
@@ -162,8 +162,10 @@ seaborn==0.13.2
 pillow==9.0.1
 ```
 
-Either route below works. They differ in one respect: conda installs Python
-3.9.12 for you, whereas `venv` requires it to be present already.
+Reproducibility was verified using Option A (conda). Option B (venv) should
+produce an equivalent environment but has not been independently verified.
+They differ in one respect: conda installs Python 3.9.12 for you, whereas
+`venv` requires it to be present already.
 
 **Option A — conda**
 
@@ -586,9 +588,9 @@ reproducible; the rendering is not bit-identical.
 
 ## Reproducibility statement
 
-Reproducibility was verified by executing the full pipeline from a clean state
-and comparing the resulting artefacts across independent runs, which were
-identical.
+Reproducibility was verified by executing the full pipeline twice from a clean
+state and comparing the resulting artefacts between runs. Ten artefacts were
+compared and were identical byte for byte.
 
 The code archived with the original article executes but does not regenerate
 the outputs reported there. The most likely explanation is that the original

@@ -26,8 +26,8 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from xml.dom import minidom
 from xml.etree.ElementTree import Element, SubElement, tostring
+from globals import DEMO_SEED as SEED, DEMO_DAYS
 
-SEED = 20260801
 IDS = [540, 544, 552, 559, 563, 567, 570, 575, 584, 588, 591, 596]
 START = datetime(2030, 1, 7, 0, 0, 0)          # obviously-synthetic future date
 TS = "%d-%m-%Y %H:%M:%S"
@@ -160,7 +160,7 @@ def build_patient(pid, days, rng):
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--out", default="sample_data", help="output directory")
-    ap.add_argument("--days", type=int, default=5, help="days per participant")
+    ap.add_argument("--days", type=int, default=DEMO_DAYS, help="days per participant")
     ap.add_argument("--ids", type=int, nargs="+", default=IDS,
                     help="participant identifiers to generate "
                          "(default: all twelve OhioT1DM identifiers)")
