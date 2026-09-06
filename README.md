@@ -592,12 +592,13 @@ Reproducibility was verified by executing the full pipeline twice from a clean
 state and comparing the resulting artefacts between runs. Ten artefacts were
 compared and were identical byte for byte.
 
-The code archived with the original article executes but does not regenerate
-the outputs reported there. The most likely explanation is that the original
-outputs were produced across several partial runs accumulating in a shared
-output directory — no stage removes outputs from a previous run, and the merge
-stage consumes whatever intermediate files it finds — a condition that cannot
-be recreated. This package supersedes that archive.
+The code archived with the original article was executed in the shared
+development environment and did not regenerate the outputs reported there. The
+most likely explanation is that the original outputs were produced across
+several partial runs accumulating in a shared output directory — no stage
+removes outputs from a previous run, and the merge stage consumes whatever
+intermediate files it finds — a condition that cannot be recreated. This
+package supersedes that archive.
 
 ---
 
