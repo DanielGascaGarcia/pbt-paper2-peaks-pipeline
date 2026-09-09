@@ -459,23 +459,35 @@ Using the same cutoff in both stages leaves mean precision essentially
 unchanged across the nine included participants and does not alter the
 included set.
 
-### Midnight-overflow trimming (peak branch only)
+### Midnight-overflow trimming (both branches)
 
-The branches are not symmetric by construction. All trimming in the meal
-branch is intra-day. In the peak branch, when an exclusion window extends past
-midnight the detection step writes a per-minute 0/1 mask for the following day,
-and `5.MergePeaksNextDay.py` applies it, rewriting that day's file in place.
+Both branches can exclude minutes past midnight when a window extends beyond
+23:59, but they do it by different mechanisms.
 
-When the mask is applied it is first aligned onto a per-minute grid and
-interpolated. Because it carries values only at CGM sample times, the
+In the **meal branch**, `4.MealBolusDetection.py` splits the post-meal window
+at midnight and writes directly into the following day's file
+(`Matrix[i+1]`), setting `BGValue` to `NaN` for the affected minutes. No mask
+is involved; the following day's file is modified in place, the same way the
+current day's file is.
+
+In the **peak branch**, when an exclusion window extends past midnight the
+detection step writes a per-minute 0/1 mask for the following day, and
+`5.MergePeaksNextDay.py` applies it, rewriting that day's file in place.
+
+When the peak-branch mask is applied it is first aligned onto a per-minute
+grid and interpolated. Because it carries values only at CGM sample times, the
 interpolation assigns fractional values to the minutes in between, and the
 threshold used (`> 0`) treats any fractional value as masked. The excluded
-window is therefore widened by a few minutes at each boundary.
+window is therefore widened by a few minutes at each boundary. This
+interpolation step has no equivalent in the meal branch, since the meal
+branch never interpolates a mask — it writes `NaN` directly at the minutes it
+identifies.
 
-This is conservative and applied identically to all participants and days. It
-is documented rather than altered, so that the deposited code reproduces the
-reported figures exactly. Users adapting the code may prefer to forward-fill
-the mask rather than interpolate it, or to threshold at `>= 0.5`.
+This is conservative and applied identically to all participants and days in
+both branches. It is documented rather than altered, so that the deposited
+code reproduces the reported figures exactly. Users adapting the peak-branch
+code may prefer to forward-fill the mask rather than interpolate it, or to
+threshold at `>= 0.5`.
 
 ### Interpolation and hourly boundaries
 
