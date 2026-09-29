@@ -1,5 +1,7 @@
 """
-generate_sample_data.py — synthetic OhioT1DM-format data for smoke-testing the pipeline.
+S.GenerateSampleData.py — synthetic OhioT1DM-format data for smoke-testing the pipeline.
+(Some older text, including the README.txt this script writes, still calls it
+generate_sample_data.py.)
 
 The OhioT1DM dataset cannot be redistributed (it requires a Data Use Agreement
 with the University of North Carolina at Charlotte). This script generates
@@ -14,10 +16,25 @@ Usage:
     python S.GenerateSampleData.py --out ./sample_data --days 5
     python S.GenerateSampleData.py --out ./sample_data --ids 559 588
 
-NOTE: the parser assigns CSV column names by the position of each child element,
-not by its tag name, so the order of the <basis_*> blocks below must match the
-real files exactly (heart_rate, gsr, skin_temperature, air_temperature, steps,
-sleep). Reordering them silently mislabels the output columns.
+NOTE: 1.ColumnNamer.py and 2.Disaggregator.py assign column names by the
+position of each top-level element, not by its tag name, so the order of ALL
+the blocks written below must match the real files exactly: glucose_level,
+finger_stick, basal, temp_basal, bolus, meal, sleep, work, stressors,
+hypo_event, illness, exercise, then the <basis_*> blocks (heart_rate, gsr,
+skin_temperature, air_temperature, steps, sleep). Reordering them silently
+mislabels the output columns.
+
+What is simulated (per participant, per day)
+    - CGM every 5 min: drift towards 120 mg/dL, a dawn rise between 04:00 and
+      08:00, noise, and a rise-then-fall excursion after each meal, clipped to
+      45-380 mg/dL.
+    - Meals: breakfast, lunch, dinner, and a snack on about half of the days,
+      with jittered times and carbohydrate amounts; one bolus 5 min before
+      each meal.
+    - Basal: four rate changes a day (00, 06, 12, 18 h).
+    - Sleep, work, and wristband heart rate, GSR, temperatures and steps
+      (steps are 0 between 23:00 and 06:59).
+    - Dates start in 2030 so the files are obviously synthetic.
 """
 
 import argparse
@@ -27,6 +44,7 @@ from pathlib import Path
 from xml.dom import minidom
 from xml.etree.ElementTree import Element, SubElement, tostring
 from globals import DEMO_SEED as SEED, DEMO_DAYS
+
 
 IDS = [540, 544, 552, 559, 563, 567, 570, 575, 584, 588, 591, 596]
 START = datetime(2030, 1, 7, 0, 0, 0)          # obviously-synthetic future date
@@ -199,9 +217,7 @@ def main():
         f"Generated: {len(args.ids)} participant(s), {args.days} day(s) each, "
         f"base seed {args.seed}.\n"
         "A short run is enough to verify that every pipeline step executes, but\n"
-        "the resulting figures are sparse and the last day of each participant\n"
-        "is incomplete, because the midnight-overflow trimming needs the\n"
-        "following day to close. This is expected, not a fault.\n",
+        "the resulting figures are sparse. This is expected, not a fault.\n",
         encoding="utf-8",
     )
     print(f"wrote {out / 'README.txt'}")

@@ -1,0 +1,4 @@
+,n,Mean,SD,Median,Q1-Q3,Range
+"Difference in absolute-magnitude summaries, n=12",12,0.95,2.09,1.33,-0.40 to 2.19,-2.93 to 4.41
+"Difference in signed summaries, n=9",9,6.34,1.76,5.66,5.41 to 7.01,4.62 to 10.27
+"Difference in signed summaries, n=12",12,6.0,1.67,5.66,4.82 to 6.29,4.21 to 10.27

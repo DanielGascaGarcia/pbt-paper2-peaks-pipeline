@@ -1,6 +1,34 @@
-#Description: Generating pivot with relative changes.
-#Created 10th May 2023
-#Author: mbaxdg6
+"""
+9.Boxplot.py
+Step 9 (meal-based branch of paper 2): collect the hourly relative changes of
+all days into one table.
+
+Created: 10 May 2023
+Author:  mbaxdg6 (Daniel Gasca Garcia)
+
+What it does
+    Reads the 24 lastValues files from 8.RelativeChange.py and puts them side
+    by side (one column per hour, one row per day) in
+    Boxplot<id>0-24total.csv, which the comparison stage of paper 2 reads.
+    The box plot is still drawn but, unlike paper 1, it is not saved: the
+    figure in the article comes from the peak-based branch.
+
+Inputs
+    globals.id, globals.path2, globals.path3, globals.MGDL_TO_MMOL,
+    globals.FIGURE_TITLES
+    <path2>/BGHourRelativeChange<id>0To1.csv          (only to count the days)
+    <path2>/BGHourRelativeChange<id><i>To<i+1>lastValues.csv   for i = 0 ... 23
+
+Outputs
+    <path2>/Boxplot<id>0-24total.csv
+        Columns [0-1], [1-2], ..., [23-24]; one row per day; mg/dL.
+
+Notes
+    - Number of rows = number of day columns: the 0To1 file has Key + one
+      column per day, so "-1" is the correct offset.
+    - The meal-based lastValues files write empty days as "" (read back as
+      NaN, row kept), so row j is day j here.
+"""
 
 
 import datetime 
@@ -15,6 +43,7 @@ import seaborn as sns
 import matplotlib
 matplotlib.rcParams.update({'font.size': 18})
 import globals
+# --- Configurable global variables (set in globals.py) ---
 id=globals.id;
 path2=globals.path2;
 path3=globals.path3;
@@ -39,6 +68,8 @@ def figTitle(text):
 # -----------------------------------------------------------#
 # Obtain the last values
 # -----------------------------------------------------------#
+# One row per day: Key + one column per day in this file -> "-1".
+# Table for the (unsaved) plot, hours in reverse order.
 total = pd.DataFrame(index=range(len(pd.read_csv(str(path2)+str(fileToRead)+str(0)+str("To")+str(1)+".csv").columns)-1));
 for i in reversed(range(24)):
     data = pd.read_csv(str(path2)+str(fileToRead)+str(i)+str("To")+str(i+1)+"lastValues"+".csv");
@@ -47,6 +78,7 @@ for i in reversed(range(24)):
 # -----------------------------------------------------------#
 # Saving in the correct order
 # -----------------------------------------------------------#
+# Same table in normal hour order, with labels [i-i+1]; this one is saved.
 total1 = pd.DataFrame(index=range(len(pd.read_csv(str(path2)+str(fileToRead)+str(0)+str("To")+str(1)+".csv").columns)-1));
 for i in range(24):
     data = pd.read_csv(str(path2)+str(fileToRead)+str(i)+str("To")+str(i+1)+"lastValues"+".csv");

@@ -1,0 +1,4 @@
+comparison,pairs,median_JS
+"between methods, same participant",9,0.1157
+"between participants, meal-based method",36,0.0789
+"between participants, peak-based method",36,0.0667

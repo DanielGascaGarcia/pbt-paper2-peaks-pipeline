@@ -1,10 +1,22 @@
-#Code: G.ComposeFigure2.py
-#Description: Compose panels A and B into a single Figure 2.
-#             Reads the two PNGs already written to path3 by
-#             4.PeaksDetection.py, trims the white border matplotlib
-#             leaves around the axes, scales them to a common width and
-#             stacks them vertically with the panel letter to the left.
-#Author: mbaxdg6
+"""
+G.ComposeFigure2.py
+Figure 2 of paper 2: stacks panels A and B into one image.
+
+Author: mbaxdg6 (Daniel Gasca Garcia)
+
+What it does
+    Reads Figure2a.png and Figure2b.png from path3 (written by
+    4.PeaksDetection.py for participant globals.idG and day globals.FIG2_DAY),
+    trims the white border matplotlib leaves around the axes, scales the
+    panels to a common width and stacks them vertically with the panel letter
+    to the left of each one. Stops with a message if a panel is missing.
+
+Inputs
+    globals.path3, globals.FIG2_DAY, globals.DEMO; the two panel PNGs
+
+Output
+    <path3>/Figure2.png
+"""
 
 import os
 import sys

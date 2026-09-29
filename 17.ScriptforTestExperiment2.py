@@ -1,8 +1,27 @@
-#Code: 17.ScriptforTestExperiment2.py
-#Description: Full pipeline runner for experiment 2 (peak detector)
-#             plus the meal-based branch it is compared against.
-#Created 5th July 2023
-#Author: mbaxdg6
+"""
+17.ScriptforTestExperiment2.py
+Orchestrator for the experiment 2 (paper 2) pipeline: the peak-based branch
+and the meal-based branch it is compared against.
+
+Created: 5 July 2023
+Author:  mbaxdg6 (Daniel Gasca Garcia)
+
+What it does
+    1. Demo mode: regenerates the synthetic input. Real mode: checks that the
+       twelve OhioT1DM training files are in place.
+    2. Clears the intermediate folder (path2). path3 and path4 are not
+       cleared; the tables written there by per-participant steps replace
+       each participant's row (Table3.csv) or are rebuilt on the first
+       participant (Table2_NonInferiority.csv).
+    3. Runs COMMON + MEALS + PEAKS + COMPARE once per participant, passing
+       the ID through PATIENT_ID.
+    4. Stops before the aggregation if any participant failed or did not
+       produce both Boxplot<id> and BoxplotPeak<id> summaries.
+    5. Runs the cross-participant scripts with PATIENT_ID = globals.idG.
+
+Usage
+    python 17.ScriptforTestExperiment2.py
+"""
 
 import subprocess
 import shutil
@@ -58,6 +77,12 @@ PIPELINE = COMMON + MEALS + PEAKS + COMPARE
 FINAL_SCRIPTS = [
     "G.CGMCoverage.py",
     "G.PrecisionSummary.py",
+    # Agreement between the two branches (read Table3.csv, written during the
+    # per-participant pass). Shared reader: pbt_io.py.
+    "G.BADescriptives.py",       # descriptive statistics
+    "G.BlandAltman.py",          # primary analysis, absolute and signed
+    "G.Divergence.py",           # Jensen-Shannon / Kullback-Leibler
+    "G.Branches.py",             # both branches, all 12 participants
     "G.GraphResultsPeak.py",
     "G.Graph3DCleanBGPeak.py",
     "G.Graph3DPeaksRemoved.py",

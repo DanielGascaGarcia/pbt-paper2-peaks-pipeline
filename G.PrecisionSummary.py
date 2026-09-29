@@ -1,17 +1,21 @@
-#Code: G.PrecisionSummary.py
-#Description: Summary of classification precision across participants, read
-#             from the per-participant table written by 4.PeaksDetection.py.
-#
-#             Two levels are reported and labelled as such:
-#               - participant level: the mean of the per-participant
-#                 precisions, with a t interval on n-1 degrees of freedom.
-#                 This is the reported statistic.
-#               - pooled: successes over scored peaks across participants,
-#                 reported as a count. No interval is attached, because the
-#                 peaks are clustered within participants and a binomial
-#                 interval would treat them as independent.
-#Author: mbaxdg6
+"""
+G.PrecisionSummary.py
+Summary of the peak-detector precision across participants, from Table3.csv
+written by 4.PeaksDetection.py.
 
+Author: mbaxdg6 (Daniel Gasca Garcia)
+
+Two levels are reported and labelled as such:
+  - participant level: mean of the per-participant precisions, with a t
+    interval on n-1 degrees of freedom. This is the reported statistic.
+  - pooled: successes over scored peaks across participants, as a count. No
+    interval is attached, because the peaks are clustered within
+    participants and a binomial interval would treat them as independent.
+Both are computed for the included participants (Quality = 0) and for all.
+
+Input   <path4>/Table3.csv
+Output  <path4>/PrecisionSummary.csv
+"""
 import os
 import numpy as np
 import pandas as pd

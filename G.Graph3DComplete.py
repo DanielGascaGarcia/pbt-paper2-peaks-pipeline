@@ -1,7 +1,28 @@
-#Code: G.Graph3DComplete.py
-#Description: Graph all Blood Glucose readings (Figure 3, panel a).
-#Author: mbaxdg6
+"""
+G.Graph3DComplete.py
+Figure 3a: all CGM readings of the worked-example participant, before any
+exclusion, as a 3D scatter (time of day x day x BG).
 
+Author: mbaxdg6 (Daniel Gasca Garcia)
+
+Inputs
+    globals.idG, globals.path2, globals.path3, globals.MGDL_TO_MMOL,
+    globals.FIGURE_TITLES
+    <path2>/PivotBG_wCN.csv
+    <path2>/glucose_level<id>-ws-training_wCN <Weekday>-<YYYY-MM-DD> .csv
+        (daily working copies of the MEAL-based branch, 4.MealBolusDetection.py;
+        column BGValue2 = every reading, before exclusion). This panel
+        therefore needs the meal-based branch to have run.
+
+Outputs
+    <path2>/BGwALLMLeftJoined<id>.csv
+    <path3>/Figure3a.png
+
+Notes
+    - "Day number" follows the os.listdir order of the day files, not
+      necessarily the calendar order.
+    - The z range is fixed at 0-400 mg/dL.
+"""
 import pandas as pd
 import os
 import matplotlib.pyplot as plt
@@ -11,6 +32,7 @@ import numpy as np
 import globals
 matplotlib.rcParams.update({'font.size': 18});
 
+# Worked-example participant, whatever PATIENT_ID says.
 id=globals.idG;
 path2=globals.path2;
 path3=globals.path3;
@@ -45,6 +67,7 @@ listVariables=['glucose_level',
 
 
 filesToGraph=[];
+# Meal-branch working copies (note the "_wCN " with the space).
 for file in os.listdir(path2):
     if file.startswith(listVariables[0]+str(fileToRead)+str('_wCN ')):
         print(file); 
@@ -54,6 +77,7 @@ print(filesToGraph);
 
 # reading two csv files
 data1 = pd.read_csv(str(path2)+'PivotBG_wCN'+'.csv')
+# BGValue2 = the reading before any exclusion; joined to the minute grid.
 data2 = pd.read_csv(str(path2)+filesToGraph[0],usecols = ['Time','BGValue2']);
 data2.rename(columns = {'BGValue2':'BGValue'+str(0)}, inplace = True);
 data2.rename(columns = {'Time':'Key'}, inplace = True);
@@ -79,6 +103,7 @@ output1.to_csv(str(path2)+str(fileToSave));
 # -----------------------------------------------------------#
 #              Graph 
 # -----------------------------------------------------------#
+# Re-read the joined table and convert Key "HH:MM:SS" to hours for the x axis.
 df =  pd.read_csv(str(path2)+str(fileToSave));
 Key=df["Key"].to_numpy();
 
@@ -102,6 +127,7 @@ for col in df.columns:
         print(col);
         columns.append(col);
 
+# One scatter per day: x = time of day, y = day index, z = BG (mg/dL).
 for i in range(len(columns)):
     threedee.scatter(df["Time1"], i, df["BGValue"+str(i)]);
 
@@ -113,6 +139,7 @@ threedee.set_zlabel('Blood glucose levels \n mg/dL (mmol/L)', labelpad=60);
 threedee.tick_params(axis='z', pad=20);
 
 zticks_mgdl = [0, 90, 180, 270, 360];
+# z axis in mg/dL with the mmol/L value in brackets on each tick.
 threedee.set_zlim(0, 400);
 threedee.set_zticks(zticks_mgdl);
 threedee.set_zticklabels([f"{v} ({v*MGDL_TO_MMOL:.0f})" for v in zticks_mgdl]);

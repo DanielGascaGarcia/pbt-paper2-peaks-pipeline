@@ -1,9 +1,35 @@
-# Code: 10.Non-inferiorityTest.py
-# Description: Non-inferiority test between the meal-based and peak-based
-#              branches, plus the descriptive comparison of the two
-#              distributions (Figure 5).
-# Created 14th November 2023
-# Author: mbaxdg6
+"""
+10.Non-inferiorityTest.py
+Comparison of the meal-based and peak-based branches for one participant:
+the non-inferiority test behind Table 2 of the published article, and the
+descriptive box plot of Figure 5.
+
+Created: 14 November 2023
+Author:  mbaxdg6 (Daniel Gasca Garcia)
+
+Inputs
+    globals.id, globals.ids, globals.idG, globals.path2/3/4,
+    globals.MGDL_TO_MMOL, globals.FIGURE_TITLES
+    <path2>/Boxplot<id>0-24total.csv       (meal-based branch, 9.Boxplot.py)
+    <path2>/BoxplotPeak<id>0-24total.csv   (peak-based branch, 9.BoxplotPeak.py)
+
+Outputs
+    <path4>/Table2_NonInferiority.csv   one row per participant; rebuilt when
+                                        the first participant of globals.ids runs
+    <path3>/Figure5.png                 only for idG
+    The 24 hourly tests are printed to the console only.
+
+What is compared
+    The ABSOLUTE hourly relative changes of every hour and day, pooled per
+    branch. Test: one-sided Welch-type non-inferiority test with a margin of
+    20% of the meal-branch mean (lower is better).
+
+Notes
+    - This version computes the p-value from the signed statistic (upper
+      tail) and scales the reference variance by (1 + margin)^2. The status
+      and the known limitations of the published design are described in the
+      comment block that follows this docstring.
+"""
 
 # NOTE ON STATUS
 # --------------

@@ -1,7 +1,41 @@
-#Code: G.GraphResultsPeak.py
-#Description: Cross-participant results for the peak branch.
-#Created 3rd August 2023
-#Author: mbaxdg6
+"""
+G.GraphResultsPeak.py
+Aggregation over the participants of paper 2 (peak-based branch): hourly
+categories, summary statistics and Figures 7 and 8.
+
+Created: 3 August 2023
+Author:  mbaxdg6 (Daniel Gasca Garcia)
+
+What it does
+    1. For each participant in globals.ids, takes one row per hour (minute 1
+       of every hour) from ComparisonJoinedPeakNoActivity<id>.csv and
+       classifies the hourly median relative change: > 0 too little insulin,
+       < 0 too much, = 0 optimal, empty missing.
+    2. Sum of the ABSOLUTE hourly median relative changes per participant,
+       with mean, SD, t-based 95% CI (n-1 df) and the largest value.
+    3. Extremes of the off-target hourly medians.
+    4. Figure 8: box plots of the off-target hourly medians by participant
+       and category. Figure 7: hours per category and participant, plus the
+       caption values (pooled off-target %, participant-level mean, SD, CI).
+
+Inputs
+    globals.ids, globals.path2/3/4, globals.MGDL_TO_MMOL, globals.FIGURE_TITLES
+    <path2>/ComparisonJoinedPeakNoActivity<id>.csv   (12.MergeRChBasalPeakNoAct.py)
+
+Outputs
+    <path2>/ComparisonSampledPeakNoActivity<id>.csv (+ Clean), Complete.csv,
+            CompleteBP.csv, MedianUMedRelChange.csv, SumUMedRelChange.csv
+    <path4>/SumUMedRelChange_byID.csv, SummaryStats_UMedRelChange.csv,
+            MedRelChange_extremes.csv, Figure7_key_values.csv, Figure7_data.csv
+    <path3>/Figure7.png, Figure8.png
+
+Notes
+    - Uses ALL participants in globals.ids (twelve). The Quality flag of
+      Table 3 is not applied here; it is applied to precision only
+      (G.PrecisionSummary.py).
+    - The per-participant sums are sums of absolute relative changes, not
+      glucose levels.
+"""
 
 import pandas as pd
 from pandas import DataFrame

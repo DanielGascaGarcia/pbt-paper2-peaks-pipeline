@@ -1,9 +1,18 @@
-#Code: globals.py
-#Description: Central configuration for the experiment 2 pipeline.
-#             Every script imports this module, so all paths, IDs and
-#             constants live here and nowhere else. Do not hardcode any
-#             of these values inside individual scripts.
-#Author: mbaxdg6
+"""
+globals.py
+Central configuration for the experiment 2 (paper 2) pipeline.
+
+Every script imports this module, so all paths, IDs and constants live here
+and nowhere else. Do not hardcode any of these values inside individual
+scripts.
+
+Author: mbaxdg6 (Daniel Gasca Garcia)
+
+Note: DEMO is set to True in this file, so the pipeline runs on synthetic
+data by default. Set it to False to run on the real OhioT1DM files in raw/.
+The "Agg" backend below never opens a window, so any plt.show() call does
+nothing; figures are written by savefig only.
+"""
 
 import os
 import matplotlib
@@ -85,9 +94,7 @@ idG = 588
 
 # Days per participant generated in demo mode. The real dataset provides
 # about 45 days per participant; a short synthetic run is enough to verify
-# that every step executes, but the figures it produces are sparse and the
-# last day is always incomplete, because the midnight-overflow trimming
-# needs the following day to close.
+# that every step executes, but the figures it produces are sparse.
 DEMO_DAYS = 5
 
 # Seed for the synthetic generator, so a demo run is reproducible. The

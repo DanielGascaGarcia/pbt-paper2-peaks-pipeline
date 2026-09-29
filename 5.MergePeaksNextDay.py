@@ -1,7 +1,49 @@
-#Code: 5.MergePeaksNextDay.py
-#Description: Read files and find peaks.
-#Created 14th November 2023
-#Author: mbaxdg6
+"""
+5.MergePeaksNextDay.py   (header of the original file reads "Read files and find peaks")
+Step 5 (peak-based branch): carry the part of a removal window that passes
+midnight over to the following day.
+
+Created: 14 November 2023
+Author:  mbaxdg6 (Daniel Gasca Garcia)
+
+What it does
+    4.PeaksDetection.py writes, for a day whose removal window runs past
+    midnight, a "_Merge" file holding the readings that must be removed from
+    the early hours of the FOLLOWING day. For every such file this script:
+      1. puts it on the minute grid (PivotPeak_wCN.csv) and interpolates it
+         (limit 5 minutes, both directions), so the marks cover the minutes
+         between readings;
+      2. finds the working copy (_wCNF) of the same date;
+      3. blanks BGValue in that copy wherever the interpolated mark is > 0,
+         and saves the copy back under the same name.
+
+Inputs
+    globals.id, globals.path2
+    <path2>/glucose_level<id>-ws-training_Merge <Weekday>-<YYYY-MM-DD> .csv   (4.PeaksDetection.py)
+    <path2>/glucose_level<id>-ws-training_wCNF <Weekday>-<YYYY-MM-DD> .csv    (4.PeaksDetection.py)
+    <path2>/PivotPeak_wCN.csv                                                 (minute grid, column Time)
+
+Outputs
+    The same _wCNF files, overwritten: BGValue blanked where the carried-over
+    window applies, a new column "Delete" (the interpolated mark) and the
+    Time values written as "HH:MM:00".
+
+Notes
+    - The interpolation widens the carried-over window: gaps of up to 10
+      minutes are bridged and up to 5 minutes are added at each edge, so a
+      few more minutes are removed than the marks alone would remove.
+    - The _Merge file and the _wCNF file are paired by the date part of the
+      name. Matrix[i][0][35:] removes "glucose_level<id>-ws-training_Merge "
+      (35 characters for a 3-digit ID), and the date used for sorting is cut
+      from the last 15 characters of the name, as in 4.MealBolusDetection.py.
+    - ":00" is appended to the _wCNF times before the join. The join only
+      finds matches if those times are stored as "HH:MM"; if they already had
+      seconds, no reading would be removed and no error would appear.
+    - Delete > 0 is always true for a glucose value, so any mark removes the
+      reading; empty marks (NaN) never do.
+    - The warnings filter at the top hides the pandas message about
+      interpolating the text column Time (needs pandas < 3, as pinned).
+"""
 import warnings
 import datetime 
 import pandas as pd
@@ -24,7 +66,7 @@ import math
 warnings.simplefilter(action='ignore', category=FutureWarning)
 import globals
 
-# --- Configurable global variable ---
+# --- Configurable global variables (set in globals.py) ---
 id = globals.id;
 path2 = globals.path2;
 
@@ -53,9 +95,11 @@ listVariables=['glucose_level',
 # -----------------------------------------------------------#
 #                   Files of Blood Glucose
 # -----------------------------------------------------------#
+# Day files with the carried-over marks written by 4.PeaksDetection.py.
 for file in os.listdir(path2):
     if file.startswith(listVariables[0]+str(fileToRead)+str('_Merge')):
         filesBG.append(file);
+# Matrix: [file name, date text, year, month, day], sorted by date below.
 h, w = len(filesBG), 5;
 Matrix = [[0 for x in range(w)] for y in range(h)] ;
 # -----------------------------------------------------------#
@@ -76,6 +120,7 @@ Matrix = sorted(Matrix, key = operator.itemgetter(2,3,4));
 # -----------------------------------------------------------#
 #                  Files to merge
 # -----------------------------------------------------------#
+# Working copies of the peak branch (note "_wCNF " with the space).
 for file in os.listdir(path2):
     if file.startswith(listVariables[0]+str(fileToRead)+str('_wCNF ')):
         print(file); 
@@ -85,6 +130,7 @@ for file in os.listdir(path2):
 # -----------------------------------------------------------#
 
 
+# One pass per _Merge file.
 for i in range(len(filesBG)):
     print(Matrix[i][0][35:])
     
@@ -99,11 +145,13 @@ for i in range(len(filesBG)):
     # Merge BG data with main data on 'Time'
     output = pd.merge(data1, dataBG, on='Time', how='left')
 
+    # Interpolation limit 5, both directions: widens the marks (see header).
     # Interpolate missing values if needed
     output1 = output.interpolate(limit=5, limit_direction='both')
 
     for j in range(len(filesToMerge)):
         # Check if the file to merge exists in the list
+        # Pair with the _wCNF file of the same date ([35:] = "<Weekday>-<date> .csv").
         if listVariables[0] + str(fileToRead) + str('_wCNF ') + Matrix[i][0][35:] in filesToMerge[j]:
             print("Found")
 
@@ -112,6 +160,7 @@ for i in range(len(filesBG)):
             
             # Strip whitespace in 'Time' for consistency
             FileToMerge['Time'] = FileToMerge['Time'].astype(str).str.strip()
+            # Assumes the _wCNF times are "HH:MM" (see header).
             FileToMerge['Time'] = FileToMerge['Time']+":00"
             # Rename 'BGValue' in the merged data to 'Delete'
             output1.rename(columns={'BGValue': 'Delete'}, inplace=True)
@@ -120,6 +169,7 @@ for i in range(len(filesBG)):
             output2 = pd.merge(FileToMerge, output1, on='Time', how='left')
 
             # # Replace BGValue where Delete > 0
+            # Blank the readings covered by the carried-over window.
             output2.loc[output2['Delete'] > 0, 'BGValue'] = ''
             # print(output2)
             # # Save the updated file

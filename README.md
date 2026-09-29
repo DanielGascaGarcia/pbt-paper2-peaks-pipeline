@@ -13,7 +13,7 @@ A single orchestrator executes every step in order.
 
 > **This release accompanies a correction notice.** The version archived with
 > the original article executes but does not regenerate the published values.
-> Four defects were found and are fixed here; the reported figures were
+> Six defects were found and are fixed here; the reported figures were
 > recomputed. See *Changes in this release*.
 
 ---
@@ -39,7 +39,7 @@ The pipeline runs two branches over the same data and compares them:
 | Branch | Exclusion driven by | Produces |
 |---|---|---|
 | **Meal-based** | recorded meal events (4-hour window) | `Boxplot<ID>0-24total.csv` |
-| **Peak-based** | detected peaks above the 95th percentile of height or width | `BoxplotPeak<ID>0-24total.csv` |
+| **Peak-based** | detected peaks (above 100 mg/dL) whose prominence or width exceeds the participant's 95th percentile | `BoxplotPeak<ID>0-24total.csv` |
 
 The meal branch is the reference the peak branch is measured against. It is
 **not** an optional upstream artefact: the orchestrator runs both, so no file
@@ -122,29 +122,60 @@ alone would also match the peak-branch files.
 Within a day file, three columns carry glucose and each means something
 different:
 
-- **`BGValue2`** — the readings as parsed, before any exclusion. The sensor
-  record for that day.
+- **`BGValue2`** — the readings before any exclusion. In the meal-branch
+  (`_wCN `) files these are the readings as parsed; in the peak-branch
+  (`_wCNF `) files they are already on the per-minute grid and interpolated
+  (gaps of up to 10 minutes filled), because the peak branch interpolates
+  before removing anything.
 - **`BGValue`** — the readings that survive exclusion. Blank where the meal
   window or the peak window removed the reading.
-- **`ValueCh`** — the readings that were removed; the complement of `BGValue`.
+- **`ValueCh`** — the readings that were removed. In the peak-branch files it
+  is blank for kept readings; in the meal-branch files kept readings carry 0.
 
 `BGValue` feeds the hourly relative change; `ValueCh` is what the "segments
 removed" panel of Figure 3 plots.
 
-### Reported tables, in `results/tables/`
+### Tables, in `results/tables/`, and where they are used
+
+The package writes every table the code computes. The article reports a
+selection. Each file is listed here with the use it has, so that a table
+carrying more than the article reports is not read as a hidden result.
+
+**Reported in the article or the correction notice**
 
 | File | Contents |
 |---|---|
-| `Table3.csv` | per participant: precision, successes, scored peaks, missing meal files, quality flag |
+| `Table3.csv` | per participant: precision, successes, scored peaks, days without meal annotation, quality flag |
 | `PrecisionSummary.csv` | precision at participant level (mean, SD, *t* interval) and as a pooled count |
 | `Figure7_data.csv`, `Figure7_key_values.csv` | hours by insulin condition, and the values quoted in the caption |
-| `SumUMedRelChange_byID.csv`, `SummaryStats_UMedRelChange.csv` | daily cumulative average per participant and its summary |
+| `SumUMedRelChange_byID.csv`, `SummaryStats_UMedRelChange.csv` | per participant, the sum over the day of the absolute hourly median relative changes (the article's daily cumulative value, not a glucose level), and its summary |
 | `MedRelChange_extremes.csv` | interindividual range of the relative change |
-| `Table2_NonInferiority.csv` | the superseded noninferiority analysis, one row per participant |
+| `BlandAltman_summary.csv` | agreement between branches. Row `absolute (primary)` is the primary analysis |
+| `BlandAltman_byID.csv` | per participant: both branch summaries (absolute, signed, all cells), their differences, and whether the participant is in the analysed set |
+| `Divergence_byID.csv`, `Divergence_anchor.csv` | Jensen-Shannon and Kullback-Leibler divergence per participant; and the between-participant anchor (median divergence between different participants measured with the same method) against which it is read |
+| `BA_descriptives_byID.csv`, `BA_descriptives_cohort.csv` | descriptive statistics of the data entering the agreement analysis |
+
+**Sensitivity and support.** The other four rows of `BlandAltman_summary.csv`:
+`signed` (the directional offset), `absolute, all cells` (level of
+aggregation), and the two `all 12 participants` rows (exclusion criterion).
+They are reported in the correction notice as sensitivity analyses, not as
+separate findings.
+
+**Diagnostic**
+
+| File | Contents |
+|---|---|
 | `CGMCoverage_byID.csv`, `CGMCoverage_byDay.csv` | sensor coverage, descriptive |
 
-Every figure that carries a number in the article has a corresponding CSV
-here, so the reported values can be checked without re-running the pipeline.
+**Withdrawn analysis, retained for transparency**
+
+| File | Contents |
+|---|---|
+| `Table2_NonInferiority.csv` | the noninferiority test, with its implementation corrected. The analysis is withdrawn; the table is kept so that the published result can be checked against the corrected computation (5 of 12, not 9) |
+
+Every figure that carries a number in the article or the notice has a
+corresponding CSV here, so the reported values can be checked without
+re-running the pipeline.
 
 ---
 
@@ -236,7 +267,7 @@ set.
 
 ### With the real dataset
 
-Leave `DEMO = False` in `globals.py` and place the `{id}-ws-training.xml`
+Set `DEMO = False` in `globals.py` and place the `{id}-ws-training.xml`
 files directly in `raw/`. If any expected file is absent the run stops
 immediately and names what is missing, rather than failing several steps
 later. This is what produced the `SET_ME-ws-training.xml` failure reported
@@ -262,8 +293,7 @@ python S.GenerateSampleData.py --out ./sample_data --days 5 --ids 559 588
 
 **Demo output is meaningless.** It exists to show that the code runs, not to
 approximate any result. With the default five days per participant the figures
-are sparse and the last day of each participant is incomplete, because the
-midnight-overflow trimming needs the following day to close. That is expected.
+are sparse. That is expected.
 
 ### A note on state
 
@@ -275,8 +305,9 @@ belonged to the current one, and the number of days entering the analysis
 reflects the state of the directory instead of the input data.
 
 This is the single most important operational note in this package: it is the
-defect behind the divergence between the originally published outputs and a
-clean run. The orchestrator clears `processed/` for this reason; **clear it by
+most likely cause of the divergence between the originally published outputs
+and a clean run (see *Reproducibility statement*). The orchestrator clears
+`processed/` for this reason; **clear it by
 hand if you run individual steps.**
 
 ---
@@ -304,14 +335,24 @@ The orchestrator runs four phases per participant, then the aggregate scripts.
 `G.Graph3DPeaksRemoved.py` → `G.Graph3DComplete.py` → `G.ComposeFigure2.py` →
 `G.ComposeFigure3.py`
 
+The agreement analysis runs in the same aggregate block, after
+`G.PrecisionSummary.py` (it reads `Table3.csv` for the analysed set):
+`G.BADescriptives.py` → `G.BlandAltman.py` → `G.Divergence.py` →
+`G.Branches.py`. The four share one reader, `pbt_io.py`, so every script reads
+the branch files the same way and takes the analysed set from `Table3.csv`.
+
 The two compose scripts run last because they read panel PNGs written earlier.
 
 ---
 
 ## Configuration
 
-All configuration lives in `globals.py`. Nothing is hardcoded in the
-individual scripts. Paths are resolved relative to that file, so the
+`globals.py` holds the paths, the participants, the exclusion criterion, the
+unit conversion and the figure switches. The parameters of the algorithm
+itself (the 95th-percentile thresholds, the 100 mg/dL peak height, the
+exclusion windows, the reliability percentiles, the noninferiority margin) are
+set in the scripts that use them and are described in those scripts' headers.
+Paths are resolved relative to `globals.py`, so the
 repository runs as cloned; the previous version carried absolute Windows
 paths, which is why the deposited code did not run elsewhere.
 
@@ -337,6 +378,7 @@ pbt-paper2-peaks-pipeline/
 ├─ globals.py                        configuration
 ├─ 0.Parser.py … 12.*.py             per-participant pipeline, both branches
 ├─ G.*.py                            aggregate scripts
+├─ pbt_io.py                         shared reader for the agreement scripts
 ├─ S.GenerateSampleData.py           synthetic data generator
 ├─ 17.ScriptforTestExperiment2.py    orchestrator
 ├─ requirements.txt
@@ -373,6 +415,7 @@ yourself, and only when running against the real dataset.
 | Figure 6 (relative change and reliability) | `12.MergeRChBasalPeakNoAct.py` |
 | Figure 7 (category histogram) | `G.GraphResultsPeak.py` |
 | Figure 8 (box plots by insulin condition) | `G.GraphResultsPeak.py` |
+| Figure 9 (both branches, all 12 participants) | `G.Branches.py` -> `Figure9.png` |
 
 Panel letters and the annotation boxes used in the article are applied
 afterwards in an image editor. The underlying values are unaffected.
@@ -401,6 +444,24 @@ afterwards in an image editor. The underlying values are unaffected.
   index no longer identified the day. The files are now read with
   `skip_blank_lines=False` and coerced to numeric. The set of values was
   unchanged; only their position was.
+- **Noninferiority test implementation.** The one-sided p-value was obtained by
+  halving a two-sided p-value, which discards the sign of the test statistic,
+  so the test also "passed"
+  participants whose peak branch was worse than the meal branch by more than
+  the margin; and the variance of the reference term was not scaled by
+  (1 + margin)², although the margin is a fraction of the estimated reference
+  mean. Both are corrected. On the corrected data 5 of the 12 participants meet
+  the criterion.
+- **Midnight overflow.** Both detection steps carried the part of an exclusion
+  window that passes midnight into the next CGM file in date order, whatever
+  its date; after a gap in the record (6 gaps in 4 participants) it was applied
+  to the wrong day. In the meal branch, a window passing midnight on the last
+  day also tried to open a file that does not exist, and the error stopped the
+  removal for the rest of that day. The overflow is now carried only to the
+  next calendar day, and the last day is processed completely. Effect: the
+  peak branch does not change at all (no window crossed midnight before a
+  gap); the meal branch changes by 1 to 3 values in 6 participants (544, 563,
+  570, 588, 591, 596), and no participant changes verdict in Table 2.
 
 Every reported figure was recomputed. The central finding is unchanged.
 
@@ -409,16 +470,42 @@ Every reported figure was recomputed. The central finding is unchanged.
 - The noninferiority analysis is **superseded**. It treated hourly intervals
   within participants as independent observations, which produced degrees of
   freedom in the hundreds to low thousands. It is replaced by an agreement
-  analysis at participant level. The script is retained so that the published
-  analysis remains inspectable; its output on corrected data differs from the
-  published table.
+  analysis at participant level. The script is retained, with the
+  implementation corrected (see above), so that the published analysis remains
+  inspectable; its output on corrected data differs from the published table.
+- **Agreement analysis.** For each participant and branch, the days are
+  collapsed to the median of each hour; the absolute values of the 24 medians
+  are averaged to one value per participant and branch, over the hours with
+  data in both branches. Bland-Altman analysis over participants
+  (`G.BlandAltman.py`), with normality (Shapiro-Wilk) and proportional trend
+  checked, and a Wilcoxon signed-rank test as a complement. Sensitivity rows:
+  signed values, all cells instead of hourly medians, and all 12
+  participants. A distributional comparison (Jensen-Shannon and
+  Kullback-Leibler, 8 common bins, smoothing +0.5) is computed on the same
+  hourly medians (`G.Divergence.py`), read against a between-participant anchor.
 - **All intervals are now *t* intervals on participant-level values.** The
   Wilson score method applies to a single binomial proportion; the reported
   precision is a mean of per-participant precisions. Pooled fractions are
   reported as counts, without intervals, because the underlying observations
-  are clustered within participants.
+  are clustered within participants. The proportion of off-target hours
+  (287 of 288) is reported without an interval: a *t* interval on the
+  participant-level values exceeds 100%, because eleven of the twelve
+  participants sit at 100%. The computed interval is kept in the table,
+  labelled as exceeding 100.
 - The exclusion criterion is **declared**: more than 20% of a participant's
   days without meal annotation. It was not stated explicitly in the article.
+
+### Changes to presentation only
+
+No value changes with anything in this subsection.
+
+- **Figure 4 legend.** The shaded band was labelled "No significant change",
+  which reads as the result of a test. It is a fixed visual reference of
+  ±2 mmol/L (±36 mg/dL) and is now labelled "Reference range (±36 mg/dL)",
+  built from the same constant as the band.
+- **Figure 9 file name.** The figure of both branches for all 12 participants
+  is written as `Figure9.png` (previously
+  `BothBranches12`), matching its number in the corrected article.
 
 ### Reproducibility
 
@@ -431,8 +518,8 @@ Every reported figure was recomputed. The central finding is unchanged.
   dataset.
 - Paths resolved relative to `globals.py`; thresholds, unit conversion and
   figure switches centralised there.
-- Determinism verified: two runs from a clean state, ten artefacts compared,
-  identical byte for byte.
+- Determinism verified: two runs from a clean state with the final code, ten
+  artefacts compared, identical byte for byte.
 
 ---
 
@@ -471,7 +558,7 @@ is involved; the following day's file is modified in place, the same way the
 current day's file is.
 
 In the **peak branch**, when an exclusion window extends past midnight the
-detection step writes a per-minute 0/1 mask for the following day, and
+detection step writes a 0/1 mark for each CGM reading of the following day, and
 `5.MergePeaksNextDay.py` applies it, rewriting that day's file in place.
 
 When the peak-branch mask is applied it is first aligned onto a per-minute
@@ -483,11 +570,15 @@ interpolation step has no equivalent in the meal branch, since the meal
 branch never interpolates a mask — it writes `NaN` directly at the minutes it
 identifies.
 
-This is conservative and applied identically to all participants and days in
-both branches. It is documented rather than altered, so that the deposited
+This is conservative and applied identically to all participants and days. It is documented rather than altered, so that the deposited
 code reproduces the reported figures exactly. Users adapting the peak-branch
 code may prefer to forward-fill the mask rather than interpolate it, or to
-threshold at `>= 0.5`.
+threshold at `>= 0.5`. The marks are joined to the grid on the full
+`HH:MM:SS` time, which assumes whole-minute timestamps, as in OhioT1DM.
+
+In both branches the overflow is carried only when the next CGM file is the
+next calendar day; after a gap in the record, or on the last day, nothing is
+carried (see *Changes in this release*).
 
 ### Interpolation and hourly boundaries
 
@@ -507,42 +598,16 @@ falls between two readings and receives a genuine linear interpolation.
 
 Because the hourly relative change is the last value of the hour minus the
 first, meal-branch values are integers and peak-branch values carry decimals.
-The magnitudes are equivalent; only the representation differs. This affects
-tests of exact equality: a value of exactly zero is far more likely to arise in
-the meal branch, which is why the count of "optimal" hours is fragile.
+This affects tests of exact equality: a value of exactly zero is far more likely
+to arise in the meal branch, which is why the count of "optimal" hours is
+fragile.
 
-### Day ordering and column indexing
-
-The detection and overflow steps sort per-day files chronologically. The two
-merge steps do not — they enumerate files in filesystem order. The day columns
-of the joined tables (`BGValue0`, `BGValue1`, …) are therefore indexed in
-filesystem order rather than by date, and the two branches need not use the
-same ordering. A naive `sorted()` would not fix this, because the filenames
-carry the weekday before the date.
-
-No reported statistic depends on that order: all summaries are computed per
-hour of day or per participant, and none pairs the branches day by day. The
-same applies to the row index of the box plot files, which reflects the day's
-column position rather than the calendar date.
-
-Filenames are parsed with fixed character offsets that assume a three-digit
-participant identifier. This holds for all twelve OhioT1DM identifiers.
-
-### Input schema sensitivity
-
-The XML parser assigns column names by the **position** of each child element
-within the patient record, not by its tag name. A valid OhioT1DM file whose
-`basis_*` elements appear in a different order will produce silently
-mislabelled columns, with no error raised until several steps later. The
-expected order is `basis_heart_rate`, `basis_gsr`, `basis_skin_temperature`,
-`basis_air_temperature`, `basis_steps`, `basis_sleep`. The synthetic generator
-emits them in that order for the same reason.
-
-### Parsing failures are silent
-
-The parsing and column-naming steps wrap each variable in a bare `except` and
-print a message rather than stopping. Check the console output of the first
-steps before trusting a run.
+The sensitivity analysis of the correction notice uses the two scripts in
+`sensitivity/`, which replace their namesakes in a copy of the repository and
+make the peak branch interpolate after the split, as the meal branch does. With
+them the primary bias is +0.75 mg/dL (95% CI −0.76 to +2.27), the signed offset
+stays positive in all 12 participants, and 274 of 288 hourly intervals remain
+off target; precision and Table 3 are unchanged.
 
 ### Exclusion criterion
 
@@ -584,17 +649,31 @@ hour across the whole record, so a day with an interrupted sensor contributes
 fewer values rather than distorting a continuous series. The coverage tables
 are reported so that readers can apply their own threshold.
 
-### Panel letters and annotation boxes
+### Other known limitations
 
-Figure 6 carries "A", "B" and "C" markers and the boxes around the intervals
-they identify. The code produces the plot; those annotations are applied
-afterwards in an image editor and are not reproduced by a run. The underlying
-values are unaffected.
-
-### Rendering
-
-Font availability and backend differences change pixel output. The values are
-reproducible; the rendering is not bit-identical.
+- **Input handling.** Column names are assigned by the position of each
+  element in the XML (`1.ColumnNamer.py`, `2.Disaggregator.py`), so a file with
+  the elements in another order is mislabelled silently. File names are parsed
+  with fixed offsets that assume a three-digit participant identifier (true for
+  all twelve).
+- **Day order.** The merge steps list per-day files in filesystem order, so the
+  day columns of the joined tables, the rows of the box-plot files and the
+  "Day number" axis of Figure 3 do not follow the calendar. No reported
+  statistic depends on that order.
+- **Silent failures.** Steps 0 to 2 wrap each variable in a bare `except`. The
+  meal branch (`4.MealBolusDetection.py`) runs inside a single `try`, so an
+  error stops the remaining days and only prints "file not found". The peak
+  branch catches errors per day and reports them in `DaysError` (0 in the
+  reported run). Check the console output before trusting a run.
+- **Meal-branch reference.** The exclusion window is a fixed 4 hours from each
+  recorded meal. The script also classifies each meal by time to peak and
+  low-pass filters the glucose to do so, but all classes remove the same
+  window, so neither the classification nor that filter changes the output.
+- **Environment.** pandas 2.2.2 is required: pandas 3 rejects interpolation of
+  a frame with a text column and position-based access by integer, both used
+  in the pipeline. Rendering is not bit-identical across systems.
+- **Figure annotations.** The "A", "B" and "C" markers and boxes of Figure 6 are
+  added afterwards in an image editor and are not reproduced by a run.
 
 ---
 

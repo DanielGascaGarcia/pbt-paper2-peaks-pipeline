@@ -1,6 +1,29 @@
-# Description: Plot hourly relative BG change WITHOUT basal info (colors preserved).
-# Created: 19 Oct 2025 (refactor to remove basal dependency)
-# Author: mbaxdg6
+"""
+12.MergeRChBasalPeakNoAct.py
+Step 12 (peak-based branch): hourly median relative change with reliability
+colours, without basal insulin or activity panels (Figure 6 of paper 2).
+
+Created: 19 October 2025 (refactor that removed the basal dependency)
+Author:  mbaxdg6 (Daniel Gasca Garcia)
+
+Inputs
+    globals.id, globals.idG, globals.path2, globals.path3,
+    globals.MGDL_TO_MMOL, globals.FIGURE_TITLES
+    <path2>/BGHourRelativeChangePeak<id>0To24medians_wCN.csv   (10.PivotGeneratormediansPeak.py)
+
+Outputs
+    <path2>/ComparisonJoinedPeakNoActivity<id>.csv
+        Key, MedRelChange, Flag, TimeHours. The name is kept from the earlier
+        version for compatibility; the file holds neither basal nor activity.
+        Read by G.GraphResultsPeak.py.
+    <path3>/Figure6.png   only for idG
+
+Notes
+    - One point every 6 minutes is plotted (0.1 h).
+    - Colours: reliability 1 = red (low), 2 = yellow (medium), 3 = green (high).
+    - Unlike 11.MergeRChBasal.py of paper 1, there is no interpolation here
+      and the legend is built safely when a level is absent.
+"""
 
 import os
 import numpy as np
@@ -17,8 +40,8 @@ path2 = globals.path2
 path3 = globals.path3
 os.makedirs(path3, exist_ok=True)
 file_rel = f"BGHourRelativeChangePeak{id}0To24medians_wCN.csv"
-file_out = f"ComparisonJoinedPeakNoActivity{id}.csv"   # mantenemos el nombre para compatibilidad
-Sampling_time_hours = 0.1  # ~6 minutos
+file_out = f"ComparisonJoinedPeakNoActivity{id}.csv"   # name kept for compatibility
+Sampling_time_hours = 0.1  # ~6 minutes
 
 # -----------------------------------------------------------#
 # Unit conversion. Source values are in mg/dL.
@@ -36,13 +59,13 @@ if not os.path.isfile(p_rel):
 data = pd.read_csv(p_rel)
 data['Key'] = data['Key'].astype(str).str.strip()
 
-# Comprobación de columnas mínimas
+# Check the minimum columns
 needed_cols = {'Key', 'MedRelChange', 'Flag'}
 missing = needed_cols - set(data.columns)
 if missing:
     raise ValueError(f"[Paper 2] Missing columns in {p_rel}: {sorted(missing)}")
 
-# Convierte HH:MM:SS -> horas decimales
+# Convert HH:MM:SS -> decimal hours
 def hhmmss_to_hours(s: str) -> float:
     h, m, sec = s.split(':')
     return (int(h) * 3600 + int(m) * 60 + int(sec)) / 3600.0
@@ -50,19 +73,19 @@ def hhmmss_to_hours(s: str) -> float:
 data['TimeHours'] = data['Key'].apply(hhmmss_to_hours)
 
 # -----------------------------
-# Guardar salida (sin basal)
+# Save output (no basal)
 # -----------------------------
 data[['Key', 'MedRelChange', 'Flag', 'TimeHours']].to_csv(os.path.join(path2, file_out), index=False)
 
 # -----------------------------
-# Muestreo (cada ~Sampling_time_hours)
+# Sampling (every ~Sampling_time_hours)
 # -----------------------------
 data = data.sort_values('TimeHours').reset_index(drop=True)
-step = max(1, int(round(Sampling_time_hours * 60)))  # 0.1 h ≈ 6 minutos
+step = max(1, int(round(Sampling_time_hours * 60)))  # 0.1 h = 6 minutes
 data_plot = data.iloc[::step, :].copy()
 
 # -----------------------------
-# Colores por confiabilidad
+# Colours by reliability
 # Flag: 1 -> "Red" (Low), 2 -> "Yellow" (Medium), else -> "Green" (High)
 # -----------------------------
 col = np.where(

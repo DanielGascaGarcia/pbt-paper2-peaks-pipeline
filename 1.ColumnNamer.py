@@ -1,9 +1,50 @@
-#Code: 1.ColumnNamer.py
-#Description: Adding column names to parsed files.
-#Created 1st November 2022
-#Author: mbaxdg6
+"""
+1.ColumnNamer.py
+Step 1 of the pipeline: add column names to the CSV files written by
+0.Parser.py.
 
-# Importing libreries
+Created: 1 November 2022
+Author:  mbaxdg6 (Daniel Gasca Garcia)
+
+What it does
+    For each data type, reads <tag><id>-ws-training.csv (no header), gives
+    its columns names that match the field layout written by the parser, and
+    saves the result as <tag><id>-ws-training_wCN.csv ("with column names").
+
+Inputs
+    globals.id, globals.path1, globals.path2
+    <path1>/<id>-ws-training.xml               (only used to list the element tags)
+    <path2>/<tag><id>-ws-training.csv          (0.Parser.py)
+
+Outputs
+    <path2>/<tag><id>-ws-training_wCN.csv      one per data type
+    Input of 2.Disaggregator.py.
+
+IMPORTANT - positional assumption (same as 2.Disaggregator.py)
+    The names are chosen by the POSITION of the element under the XML root
+    (x == 0, 1, 2, ...), not by its tag. The labels next to each branch
+    describe the OhioT1DM order:
+        0 glucose_level, 1 finger_stick, 2 basal, 3 temp_basal, 4 bolus,
+        5 meal, 6 sleep, 7 work, 8 stressors, 9 hypo_event, 10 illness,
+        11 exercise, 12 basis_heart_rate, 13 basis_gsr,
+        14 basis_skin_temperature, 15 basis_air_temperature, 16 basis_steps,
+        17 basis_sleep
+    An XML with the same tags in another order, or with an element missing,
+    gets wrong column names without any error.
+
+Notes
+    - Each branch is wrapped in try/except: if a file is missing or cannot be
+      read (for example rows with different numbers of fields), the _wCN file
+      is not written and only 'Not valid' is printed.
+    - Some names here differ from the headers that 2.Disaggregator.py writes
+      for the per-day files (e.g. 'GRSValue' here, 'GSRValue' there). This
+      does not matter downstream: the Disaggregator skips this header and
+      writes its own.
+    - Same as in the Disaggregator: bolus has 'TimeStamp1' twice (the second
+      should be 'TimeStamp2'), and air temperature is called 'BSkinValue'.
+"""
+
+# Importing libraries
 
 import xml.etree.ElementTree as ET
 import datetime
@@ -13,12 +54,14 @@ import csv
 import pandas as pd
 import globals
 
-# --- Configurable global variable ---
+# --- Configurable global variables (set in globals.py) ---
+
 id = globals.id;
 fileToRead=str(id)+"-ws-training";
 path1=globals.path1;
 path2=globals.path2;
 
+# The XML is read only to get the list of element tags.
 ohioTree = ET.parse(str(path1)+str(fileToRead)+'.xml');
 ohioRoot = ohioTree.getroot();
 
@@ -35,6 +78,8 @@ elemList = list(set(elemList));
 print(len(elemList));
 
 
+# One branch per data type, chosen by position (see header). Every branch
+# reads the parsed CSV, renames columns 0..n and saves the _wCN file.
 for x in range(len(elemList)):
     print (x);
      # Blood Glucose
