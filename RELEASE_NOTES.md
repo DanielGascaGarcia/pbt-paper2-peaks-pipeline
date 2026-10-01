@@ -94,7 +94,7 @@ that basal rates are off target in almost every hourly interval — is unchanged
   meal-branch box plot from the Paper 1 repository and skipped the comparison
   when it was absent; that dependency is gone.
 - Verified by two independent runs from a clean state with the final code:
-  ten output artefacts compared, identical byte for byte.
+  the nineteen output tables compared, identical byte for byte.
 
 ## Running without the dataset
 

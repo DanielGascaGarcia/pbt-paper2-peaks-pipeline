@@ -245,8 +245,8 @@ python -c "import sys; print(sys.executable)"
 ```
 
 Reproducibility was verified by executing the full pipeline twice from a clean
-state and comparing the resulting artefacts between runs. Ten artefacts were
-compared and were identical byte for byte. To repeat the check, run the
+state and comparing the resulting artefacts between runs. The nineteen tables
+in `results/tables/` were compared and were identical byte for byte. To repeat the check, run the
 pipeline twice, copying the contents of `results/tables/` to a separate
 directory after the first run, and compare the two.
 
@@ -481,7 +481,8 @@ Every reported figure was recomputed. The central finding is unchanged.
   checked, and a Wilcoxon signed-rank test as a complement. Sensitivity rows:
   signed values, all cells instead of hourly medians, and all 12
   participants. A distributional comparison (Jensen-Shannon and
-  Kullback-Leibler, 8 common bins, smoothing +0.5) is computed on the same
+  Kullback-Leibler, 8 common bins spanning the pooled 1st–99th
+  percentile, values outside clipped to the boundary bins, smoothing +0.5) is computed on the same
   hourly medians (`G.Divergence.py`), read against a between-participant anchor.
 - **All intervals are now *t* intervals on participant-level values.** The
   Wilson score method applies to a single binomial proportion; the reported
@@ -518,8 +519,8 @@ No value changes with anything in this subsection.
   dataset.
 - Paths resolved relative to `globals.py`; thresholds, unit conversion and
   figure switches centralised there.
-- Determinism verified: two runs from a clean state with the final code, ten
-  artefacts compared, identical byte for byte.
+- Determinism verified: two runs from a clean state with the final code, the
+  nineteen tables in `results/tables/` compared, identical byte for byte.
 
 ---
 
@@ -680,8 +681,8 @@ are reported so that readers can apply their own threshold.
 ## Reproducibility statement
 
 Reproducibility was verified by executing the full pipeline twice from a clean
-state and comparing the resulting artefacts between runs. Ten artefacts were
-compared and were identical byte for byte.
+state and comparing the resulting artefacts between runs. The nineteen tables
+in `results/tables/` were compared and were identical byte for byte.
 
 The code archived with the original article was executed in the shared
 development environment and did not regenerate the outputs reported there. The
@@ -719,7 +720,7 @@ version. See `CITATION.cff`.
 Related deposits, by concept DOI:
 
 - Paper 1 pipeline — 10.5281/zenodo.17392920
-- Software compendium — 10.5281/zenodo.17675142
+- Software compendium — 10.5281/zenodo.17675141
 
 ---
 
