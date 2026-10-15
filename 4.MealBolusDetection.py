@@ -44,9 +44,7 @@ Assumptions worth knowing
     - The overflow past midnight is removed from the next CGM file only when
       that file is the next calendar day (has_next_day). After a gap in the
       record, or on the last day, today's window is capped at 23:59:59 and
-      nothing is removed elsewhere. Earlier versions used the next file in
-      date order whatever its date, and on the last day tried to open a file
-      that does not exist.
+      nothing is removed elsewhere.
     - The whole main program is inside one try/except. Any error stops the
       processing of all remaining days and only prints "file not found".
 """

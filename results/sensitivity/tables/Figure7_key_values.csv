@@ -1,0 +1,14 @@
+Metric,Value
+Participants,12.0
+Hours (24 x n),288.0
+Too little insulin,190.0
+Too much insulin,84.0
+Optimal,14.0
+Missing,0.0
+"Off-target %, pooled count",95.14
+"Off-target %, excl. missing",95.14
+"Off-target %, mean across participants",95.14
+Off-target % SD between participants,2.99
+Off-target % CI95 low (t),93.24
+"Off-target % CI95 high (t, exceeds 100 - not reported)",97.04
+Optimal hours per participant,1.167

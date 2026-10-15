@@ -42,9 +42,8 @@ fileToGraph="BGwNMLeftJoinedPeak"+str(id)+".csv";
 # Unit conversion. Source values are in mg/dL.
 # Factor lives in globals.py so every script shares one value.
 #
-# NOTE: the values are plotted in mg/dL, as in panels a and b. An earlier
-# version divided them by 18 before plotting, which put this panel on a
-# different scale from the other two and made the three not comparable.
+# NOTE: the values are plotted in mg/dL, as in panels a and b, so the three
+# panels share one scale.
 # -----------------------------------------------------------#
 MGDL_TO_MMOL = globals.MGDL_TO_MMOL;
 

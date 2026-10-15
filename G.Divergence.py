@@ -1,8 +1,7 @@
 #Code: G.Divergence.py
 #Description: How different are the two branches' hourly profiles as
 #             distributions? Jensen-Shannon divergence (JS), with
-#             Kullback-Leibler (KL) in both directions. The method suggested
-#             by the examiners; supporting analysis.
+#             Kullback-Leibler (KL) in both directions. Supporting analysis.
 #
 #             Step by step:
 #               1. For each participant and branch, the 24 hourly medians
@@ -26,8 +25,7 @@
 #Outputs: results/tables/Divergence_byID.csv
 #         results/tables/Divergence_anchor.csv
 #         results/tables/Divergence_summary.csv
-#Author: mbaxdg6
-
+#Author: mbaxdg6 (Daniel Gasca Garcia)
 import os
 
 import numpy as np

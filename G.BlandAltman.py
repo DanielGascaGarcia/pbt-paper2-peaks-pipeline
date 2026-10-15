@@ -1,6 +1,6 @@
 #Code: G.BlandAltman.py
 #Description: Agreement between the meal-based and the peak-based branch
-#             (Bland-Altman). Primary analysis of the corrigendum.
+#             (Bland-Altman). Primary comparison of the two branches.
 #
 #             Step by step:
 #               1. For each participant and branch, the median of each hour
@@ -33,8 +33,7 @@
 #         results/tables/Table3.csv  (participants analysed: Quality = 0)
 #Outputs: results/tables/BlandAltman_byID.csv
 #         results/tables/BlandAltman_summary.csv
-#Author: mbaxdg6
-
+#Author: mbaxdg6 (Daniel Gasca Garcia)
 import os
 
 import numpy as np

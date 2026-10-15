@@ -1,5 +1,7 @@
 """
 S.GenerateSampleData.py — synthetic OhioT1DM-format data for smoke-testing the pipeline.
+
+Author: mbaxdg6 (Daniel Gasca Garcia)
 (Some older text, including the README.txt this script writes, still calls it
 generate_sample_data.py.)
 

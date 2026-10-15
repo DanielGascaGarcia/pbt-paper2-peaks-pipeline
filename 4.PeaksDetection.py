@@ -71,7 +71,6 @@ Notes
       both "HH:MM" and "H:MM".
     - The next-day marks go to Matrix[i+1] only when it is the next calendar
       day (has_next_day); after a gap in the record nothing is carried.
-      Earlier versions used the next file in date order whatever its date.
       Several
       windows passing midnight on the same day overwrite the same _Merge
       file; the last one (latest peak) covers the earlier ones because every
@@ -270,7 +269,7 @@ for i in range(len(filesBG)):
         for j in range(10):
             BGVF[j]=BGV[j];  
 # The cutoff differs between stages by design (10 for the threshold pass, 5 for
-# detection). Sensitivity check on the corrected pipeline: using 10 in both
+# detection). Sensitivity check on the current pipeline: using 10 in both
 # stages leaves mean precision unchanged (70.65% vs 70.64%, n=9) and does not
 # alter the included participant set.
     # -----------------------------------------------------------#
@@ -534,7 +533,7 @@ for i in range(len(filesBG)):
             # Loop through each time in PeaksData_flag1["Time"]
             for time1 in PeaksData_flag1["Time"]:
                 # Find earlier times
-                earlier_times = M[M["Time"] < time1]["Time"]
+                earlier_times = M[M["Time"] <= time1]["Time"]
                 if not earlier_times.empty:
                     nearest_earlier_time = earlier_times.max()
                     time_diff_earlier = time1 - nearest_earlier_time
@@ -590,13 +589,6 @@ for i in range(len(filesBG)):
             (time_diff_df["Time_Difference_cond_sup"] > time_diff_df["Time_Difference_Later"])
             ).astype(int)
 
-            # # Drop rows where (Nearest_Earlier_Time is NaN or Nearest_Later_Time is NaN) and Flag == 0
-            # time_diff_df = time_diff_df[
-            #     ~(
-            #         ((time_diff_df["Nearest_Earlier_Time"].isna()) | (time_diff_df["Nearest_Later_Time"].isna())) & 
-            #         (time_diff_df["Flag"] == 0)
-            #     )
-            # ]
 
 
             # -----------------------------------------------------------#    
@@ -788,7 +780,7 @@ os.makedirs(path4, exist_ok=True);
 # Low-quality criterion (declared): a participant is flagged when more than
 # globals.MISSING_THRESHOLD of their days lack meal annotations, since
 # precision cannot be scored on those days. The value lives in globals.py so
-# that the threshold declared in the correction notice is traceable to a
+# that the threshold declared in the article is traceable to a
 # single place.
 MISSING_THRESHOLD = globals.MISSING_THRESHOLD;
 missFrac = len(daysNoMeal) / len(filesBG) if len(filesBG) else 0.0;

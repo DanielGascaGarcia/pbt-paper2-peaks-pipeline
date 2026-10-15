@@ -1,5 +1,7 @@
 """
-# >>> SENSITIVITY TEST VERSION - do not use for reported results <<<
+# Sensitivity analysis version: interpolation after the hourly split.
+# Replaces the script of the same name in a copy of the repository; see the
+# README (Interpolation and hourly boundaries).
 7.SplitHoursPeaks.py
 Step 7 (peak-based branch): split the minute-by-minute CGM table into 24
 files, one per hour of the day.
@@ -21,10 +23,9 @@ Outputs
     Columns: Unnamed: 0, Key, BGValue0, BGValue1, ... (two non-data columns)
 
 Notes
-    - Unlike the meal-based branch, there is no hourly interpolation step
-      after this one: 8.RelativeChangePeaks.py reads these files directly.
-      The only interpolation in this branch is the one applied to the
-      carried-over marks in 5.MergePeaksNextDay.py.
+    - In this version each hourly file is interpolated inside the hour after
+      the split, as 7.InterpolationBGHourly.py does in the meal-based branch
+      (see the block at the end of the loop).
     - The hour is taken from row[1] (Key); row[0] is the unnamed index.
 """
 
@@ -73,7 +74,7 @@ for i in range(24):
                                     # print (row[1]);
                                     csv_output.writerow(row);
 
-    # SENSITIVITY TEST (interpolation position): interpolate inside the hour,
+    # Sensitivity analysis (interpolation position): interpolate inside the hour,
     # exactly as 7.InterpolationBGHourly.py does in the meal-based branch, so
     # that both branches start and end each hour on actual readings.
     out_h = str(path2)+str(fileToSave)+str(i)+str("To")+str(i+1)+".csv"

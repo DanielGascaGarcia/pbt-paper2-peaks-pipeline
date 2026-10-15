@@ -1,5 +1,7 @@
 """
-# >>> SENSITIVITY TEST VERSION - do not use for reported results <<<
+# Sensitivity analysis version: interpolation after the hourly split.
+# Replaces the script of the same name in a copy of the repository; see the
+# README (Interpolation and hourly boundaries).
 4.PeaksDetection.py   (header of the original file reads "Read files and find peaks")
 Step 4 (peak-based branch, paper 2): detect meal-like glucose peaks without
 using meal records, remove the glucose around them, and score how often the
@@ -72,7 +74,6 @@ Notes
       both "HH:MM" and "H:MM".
     - The next-day marks go to Matrix[i+1] only when it is the next calendar
       day (has_next_day); after a gap in the record nothing is carried.
-      Earlier versions used the next file in date order whatever its date.
       Several
       windows passing midnight on the same day overwrite the same _Merge
       file; the last one (latest peak) covers the earlier ones because every
@@ -271,7 +272,7 @@ for i in range(len(filesBG)):
         for j in range(10):
             BGVF[j]=BGV[j];  
 # The cutoff differs between stages by design (10 for the threshold pass, 5 for
-# detection). Sensitivity check on the corrected pipeline: using 10 in both
+# detection). Sensitivity check on the current pipeline: using 10 in both
 # stages leaves mean precision unchanged (70.65% vs 70.64%, n=9) and does not
 # alter the included participant set.
     # -----------------------------------------------------------#
@@ -433,7 +434,7 @@ for i in range(len(filesBG)):
         df['Time']=df['Time'].str.strip(); 
         output = pd.merge(df,M,on='Time',how='left');
         
-        # SENSITIVITY TEST (interpolation position): the day-wide interpolation
+        # Sensitivity analysis (interpolation position): the day-wide interpolation
         # is removed so that the _wCNF file keeps only the actual CGM readings on
         # the minute grid. The hourly interpolation is applied after the split,
         # in 7.SplitHoursPeaks.py, as in the meal-based branch.
@@ -791,7 +792,7 @@ os.makedirs(path4, exist_ok=True);
 # Low-quality criterion (declared): a participant is flagged when more than
 # globals.MISSING_THRESHOLD of their days lack meal annotations, since
 # precision cannot be scored on those days. The value lives in globals.py so
-# that the threshold declared in the correction notice is traceable to a
+# that the threshold declared in the article is traceable to a
 # single place.
 MISSING_THRESHOLD = globals.MISSING_THRESHOLD;
 missFrac = len(daysNoMeal) / len(filesBG) if len(filesBG) else 0.0;

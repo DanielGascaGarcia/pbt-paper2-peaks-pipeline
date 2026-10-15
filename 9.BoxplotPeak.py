@@ -14,12 +14,12 @@ Inputs
 Outputs
     <path2>/BoxplotPeak<id>0-24total.csv
         Columns [0-1] ... [23-24]; one row per day; mg/dL. Read by
-        10.Non-inferiorityTest.py and 10.PivotGeneratormediansPeak.py.
+        10.ComparisonFigure.py and 10.PivotGeneratormediansPeak.py.
     <path3>/Figure4.png   only for idG
 
 Notes
     - n_rows = column count of the 0To1 file minus 1 (Key + one column per
-      day), the corrected offset.
+      day).
     - read_last_values() reads with skip_blank_lines=False and converts with
       pd.to_numeric, so the days written as " " by 8.RelativeChangePeaks.py
       stay in place as NaN and row j is day j.

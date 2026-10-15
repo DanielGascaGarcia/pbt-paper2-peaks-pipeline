@@ -7,8 +7,8 @@ Author: mbaxdg6 (Daniel Gasca Garcia)
 What it does
     For every participant in globals.ids and every daily CGM working copy,
     counts the readings present and expresses them as a percentage of a
-    complete day (288 readings, one every 5 minutes). Answers the reviewers'
-    observation about missing data points and gives descriptive statistics of
+    complete day (288 readings, one every 5 minutes). Describes missing
+    data points and gives descriptive statistics of
     the data used.
 
 Inputs

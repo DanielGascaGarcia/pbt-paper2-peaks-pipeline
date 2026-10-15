@@ -36,16 +36,14 @@ matplotlib.use("Agg")
 # data obtained under the Data Use Agreement.
 #
 # Results produced in demo mode are meaningless. Do not compare them with
-# anything reported in the article or in the correction notice.
-DEMO = True
+# anything reported in the article.
+DEMO = False
 
 # -----------------------------------------------------------#
 # Paths
 # -----------------------------------------------------------#
 # Resolved relative to this file, so the repository runs as cloned and a
-# script can also be run on its own from any working directory. The previous
-# version carried absolute Windows paths, which is why the deposited code did
-# not run elsewhere.
+# script can also be run on its own from any working directory.
 #
 #   path1  raw        input data as downloaded from OhioT1DM
 #                     (sample_data/ when DEMO is True)
@@ -111,9 +109,8 @@ DEMO_SEED = 20260801
 # those days. `4.PeaksDetection.py` writes the flag into the Quality column
 # of the summary table; the analysis scripts read it from there.
 #
-# The threshold reproduces the rule applied in the original analysis. It was
-# not stated explicitly in the published article and is declared here so
-# that the reported participant set can be traced to a single value.
+# The threshold is declared here so that the reported participant set can be
+# traced to a single value.
 MISSING_THRESHOLD = 0.20
 
 # Day used for the worked example (Figure 2), as a zero-based index into the

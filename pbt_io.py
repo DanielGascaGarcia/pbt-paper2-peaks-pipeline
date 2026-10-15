@@ -4,16 +4,13 @@
 #             Three things that must be identical across the package live here
 #             and nowhere else:
 #
-#               (1) READ_BRANCH - one reader for the hourly CSVs. Before this
-#                   module the package contained four variants (select by name;
+#               (1) READ_BRANCH - one reader for the hourly CSVs, in place of
+#                   four variants (select by name;
 #                   drop columns beginning with Unnamed; no filtering at all;
-#                   with and without numeric coercion). On the deposited files
-#                   all four return identical values - verified 09/08/2026 and
-#                   again on 13/08/2026, bias +1.2755, SD 2.0320 in every case -
-#                   so this consolidation corrects no reported number. It is
-#                   done because the examiners' finding concerned reproducibility,
-#                   and a package that reads one file three ways invites the
-#                   question of which reading produced the reported figures.
+#                   with and without numeric coercion). All four return
+#                   identical values on these files, so the consolidation
+#                   changes no reported number; one reader makes it clear
+#                   which reading produces the reported figures.
 #                   The by-name selector is the variant kept: it is the only one
 #                   that fails loudly rather than silently on a reordered or
 #                   augmented file.
@@ -24,8 +21,7 @@
 #
 #               (3) INCLUDED_IDS - the analysed set, read from the quality table
 #                   the pipeline writes rather than hard-coded in each script.
-#Author: mbaxdg6
-
+#Author: mbaxdg6 (Daniel Gasca Garcia)
 import os
 
 import pandas as pd
@@ -57,8 +53,7 @@ REPORTED_N9 = [544, 559, 563, 570, 575, 584, 588, 591, 596]
 # confidence level to be stated: for two-sided 95% content at n=9 it is 3.53 at
 # 95% confidence (3.13 at 90%), wider than both 1.96 and t = 2.306.
 #
-# Every script in the package reads the factor from here, including the rough
-# outlier screen in G.BADifferences.py, which previously rounded it to 2.
+# Every script in the package reads the factor from here.
 LOA_K = 1.96
 
 

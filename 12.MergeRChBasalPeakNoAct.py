@@ -115,7 +115,7 @@ ax2.set_ylabel("BG relative change\n(mg/dL)")
 ax2.grid(which='major', color='#DDDDDD', linewidth=0.8)
 ax2.grid(which='minor', color='#DDDDDD', linestyle=':', linewidth=0.5)
 
-# Legend labels in sentence case, spelling fixed
+# Legend labels in sentence case
 legend_added = {'Low': False, 'Medium': False, 'High': False}
 
 for _, row in data_plot.iterrows():

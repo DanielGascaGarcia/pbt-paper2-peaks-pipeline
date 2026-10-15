@@ -10,9 +10,8 @@ What it does
     1. Demo mode: regenerates the synthetic input. Real mode: checks that the
        twelve OhioT1DM training files are in place.
     2. Clears the intermediate folder (path2). path3 and path4 are not
-       cleared; the tables written there by per-participant steps replace
-       each participant's row (Table3.csv) or are rebuilt on the first
-       participant (Table2_NonInferiority.csv).
+       cleared; the table written there by a per-participant step replaces
+       each participant's row (Table3.csv).
     3. Runs COMMON + MEALS + PEAKS + COMPARE once per participant, passing
        the ID through PATIENT_ID.
     4. Stops before the aggregation if any participant failed or did not
@@ -66,7 +65,7 @@ PEAKS = [
 ]
 
 COMPARE = [
-    "10.Non-inferiorityTest.py",
+    "10.ComparisonFigure.py",
     "10.PivotGeneratormediansPeak.py",
     "12.MergeRChBasalPeakNoAct.py",
 ]
@@ -120,8 +119,7 @@ else:
     # Real dataset: fail early and say what is missing
     # -----------------------------------------------------------#
     # Without this check a missing or misplaced dataset surfaces several
-    # steps later as an unrelated error. This is what produced the
-    # SET_ME-ws-training.xml failure reported against the deposited code.
+    # steps later as an unrelated error.
     missing = [i for i in globals.ids
                if not os.path.isfile(os.path.join(globals.path1,
                                                   f"{i}-ws-training.xml"))]
@@ -148,9 +146,8 @@ else:
 # regenerating a known list, and the midnight-overflow step rewrites those
 # files in place. A file left behind by an earlier or partial run is
 # therefore picked up as if it belonged to this one, and the number of days
-# entering the analysis reflects the state of the directory instead of the
-# input data. This is the defect behind the divergence between the
-# originally published outputs and a clean run.
+# entering the analysis would reflect the state of the directory instead of
+# the input data. Clearing it makes every run independent of earlier ones.
 print(f"Clearing intermediate directory: {globals.path2}")
 shutil.rmtree(globals.path2, ignore_errors=True)
 for directory in (globals.path2, globals.path3, globals.path4):

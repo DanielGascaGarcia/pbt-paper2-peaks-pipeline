@@ -1,8 +1,6 @@
 #Code: G.BADescriptives.py
 #Description: Descriptive statistics for the data entering the Bland-Altman
-#             analysis, at the level at which it is analysed. Answers the
-#             examiners' request to see the descriptive statistics associated
-#             with the data being analysed, for this analysis specifically.
+#             analysis, at the level at which it is analysed.
 #
 #             Two blocks:
 #               (1) per participant - each branch summary, their mean and
@@ -18,8 +16,7 @@
 #
 #             The reader is the shared one in pbt_io, the by-name selector,
 #             which fails loudly on a reordered or augmented file.
-#Author: mbaxdg6
-
+#Author: mbaxdg6 (Daniel Gasca Garcia)
 import os
 
 import numpy as np

@@ -1,0 +1,3 @@
+Set,N,IDs,Mean_pct,SD_pct,CI95_low_pct,CI95_high_pct,Pooled_successes,Pooled_peaks,Pooled_pct,Min_pct,Min_fraction,Min_ID,Max_pct,Max_fraction,Max_ID
+included (Quality = 0),9,544 559 563 570 575 584 588 591 596,70.65,10.18,62.83,78.48,556,785,70.83,48.96,47/96,584,84.55,93/110,588
+all participants,12,540 544 552 559 563 567 570 575 584 588 591 596,64.86,13.71,56.15,73.57,619,920,67.28,44.44,28/63,552,84.55,93/110,588

@@ -1,14 +1,12 @@
 #Code: G.Branches.py
 #Description: Hourly BG relative change for both algorithmic approaches,
 #             all 12 participants - one panel each.
-#             Answers the examiners' request to see the data visualised for
-#             the outcomes of both approaches for all participants.
+#             Shows the outcomes of both approaches for all participants.
 #
 #             FIGURE SIZE. The figure is drawn at its final printed size
 #             (6.3 in of text width) with the font sizes it will be read at,
 #             so that no reduction happens at typesetting. Setting a large
-#             figure and letting the page shrink it is what produced labels
-#             under 6 pt in the version the examiners complained about.
+#             figure and letting the page shrink it gives labels under 6 pt.
 #             Every value below is therefore a PRINTED size: change the
 #             figure width only together with the fonts.
 #
@@ -16,8 +14,7 @@
 #             envelope spans 62 to 123 mg/dL, with no participant extreme
 #             enough to compress the others, so a common axis aids comparison
 #             at no cost. Verified on the data, not assumed.
-#Author: mbaxdg6
-
+#Author: mbaxdg6 (Daniel Gasca Garcia)
 import os
 
 import matplotlib
